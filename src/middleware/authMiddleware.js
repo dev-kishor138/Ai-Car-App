@@ -1,28 +1,47 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import User from "../models/User.js";
 
-dotenv.config();
 
-// ✅ Authentication Middleware
-export const authenticateUser = (req, res, next) => {
-    const token = req.header("Authorization");
-    if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
+// export const isAuthenticated = async (req, res, next) => {
+//     const token = req.headers["authorization"];
+
+//     console.log("Received Token:", token);
+//     console.log("JWT Token:", process.env.JWT_SECRET_TOKEN);
+//     // let test = jwt.verify(token, process.env.JWT_SECRET_TOKEN)
+//     // console.log("test", test);
+
+//     if (!token) {
+//         return res.status(403).json({ message: "No token provided, access denied." });
+//     }
+
+//     try {
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET_TOKEN);
+//         console.log(decoded);
+//         req.user = await User.findById(decoded.userId);
+//         next();
+//     } catch (error) {
+//          console.error("Error in token verification:", error);
+//         return res.status(401).json({ message: "Invalid token." });
+//     }
+// };
+
+export const isAuthenticated = async (req, res, next) => {
+    const token = req.headers["authorization"]?.replace("Bearer ", "");
+    // console.log("Received Token:", token);
+    // console.log("JWT Secret from Env:", process.env.JWT_SECRET_TOKEN);  // Log secret from env
+
+    if (!token) {
+        return res.status(403).json({ message: "No token provided, access denied." });
+    }
 
     try {
-        const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET_TOKEN);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        res.status(400).json({ message: "Invalid token" });
-    }
-};
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_TOKEN);  // Verify using the correct secret key
+        // console.log("Decoded Token:", decoded);  // Log decoded token for debugging
 
-// ✅ Admin Middleware
-export const authenticateAdmin = (req, res, next) => {
-    authenticateUser(req, res, () => {
-        if (req.user.role !== "admin") {
-            return res.status(403).json({ message: "Access denied. Admins only." });
-        }
-        next();
-    });
+        req.user = await User.findById(decoded.id);  // Ensure you are passing the correct user ID
+        next();  // Proceed to the next middleware or route handler
+    } catch (error) {
+        console.error("Error in token verification:", error);  // Log error details
+        return res.status(401).json({ message: "Invalid token." });
+    }
 };

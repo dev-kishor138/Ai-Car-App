@@ -1,14 +1,11 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-// import dotenv from "dotenv";
-import { generateTokens } from "../lib/generateToken.js";
 import DevBuildError from "../lib/DevBuildError.js";
 
-// dotenv.config();
+
 
 // ✅ User Registration
-export const registerUser = async (req, res, next) => {
+export const createUser = async (req, res, next) => {
     try {
         const { name, email, password, phone, image } = req.body;
         const existingUser = await User.findOne({ email });
@@ -19,6 +16,7 @@ export const registerUser = async (req, res, next) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        // console.log("hashedPassword", hashedPassword);
         const user = new User({ name, email, password: hashedPassword, phone, image });
 
         await user.save();
@@ -32,69 +30,86 @@ export const registerUser = async (req, res, next) => {
 };
 
 
-// ✅ User Login with JWT
-export const loginUser = async (req, res, next) => {
+// Get all users
+export const getAllUser = async (req, res, next) => {
     try {
-        const { email, password } = req.body;
-        console.log("📌 Login Request:", email, password);
-        const user = await User.findOne({ email });
+        // const users = await User.find({}, '-password');  // Exclude password field from the result
+        const users = await User.find({});  // Exclude password field from the result
 
-        if (!user) {
-            throw new DevBuildError("User not found", 400);
-            // return res.status(400).json({ message: "User not found" });
+        if (!users) {
+            throw new Error("No users found");
         }
 
-        // Password Matching
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            // return res.status(400).json({ message: "Invalid credentials" });
-            throw new DevBuildError("Invalid credentials", 400);
-        }
-
-        // Generate Tokens
-        const { accessToken, refreshToken } = generateTokens(user);
-
-        res.status(200).json({ message: "Login successful", accessToken, refreshToken });
-
-    } catch (error) {
-        // res.status(500).json({ error: error.message });
-        next(error);
-    }
-};
-
-
-// ✅ Refresh Token API
-export const refreshToken = async (req, res, next) => {
-    try {
-        const { refreshToken } = req.body;
-        // if (!refreshToken) return res.status(401).json({ message: "Refresh token required" });
-        if (!refreshToken) throw new DevBuildError("Refresh token required", 401);
-
-        jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (err, decoded) => {
-            // if (err) return res.status(403).json({ message: "Invalid refresh token" });
-            if (err) throw new DevBuildError("Invalid refresh token", 403);
-
-            const accessToken = jwt.sign(
-                { id: decoded.id },
-                process.env.JWT_SECRET_TOKEN,
-                { expiresIn: process.env.JWT_EXPIRES_IN }
-            );
-
-            res.status(200).json({ accessToken });
+        res.status(200).json({
+            message: "Users retrieved successfully",
+            users
         });
-
     } catch (error) {
-        // res.status(500).json({ error: error.message });
         next(error);
     }
 };
 
-// ✅ get all users
-// export const getAllUser = async (req, res) => {
-//     try {
-//         const users = await User.find();  // Get all users from database
-//         res.status(200).json(users);      // Return the list of users
-//     } catch (error) {
-//         res.status(400).json({ error: error.message }); // Error handling
-//     }
-// }
+
+// ✅ User Edit (Update)
+export const editUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        const { name, email, phone, image, status } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new DevBuildError("User not found", 404);
+        }
+
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.phone = phone || user.phone;
+        user.image = image || user.image;
+        user.status = status || user.status;
+
+        await user.save();
+
+        res.status(200).json({ message: "User updated successfully", user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// ✅ User Soft Delete
+export const deleteUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new DevBuildError("User not found", 404);
+        }
+
+        await user.softDelete();  // Soft delete
+        res.status(200).json({ message: "User deleted successfully", user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// ✅ User Hard Delete
+export const confirmDeleteUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        // Check if user exists
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new DevBuildError("User not found", 404);
+        }
+
+        // Hard delete the user by removing from the database
+        await user.remove();
+
+        res.status(200).json({ message: "User confirm deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};

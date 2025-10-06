@@ -3,37 +3,72 @@ import softDeletePlugin from "../lib/softDeletePlugin.js";
 
 const userSchema = new Schema(
     {
-        name: { type: String, required: true, minlength: 2, maxlength: 50 },
+        name: { type: String, required: true, minlength: 2, maxlength: 250 },
+
         email: {
             type: String,
             required: true,
-            unique: true,
+            // unique: true,
             lowercase: true,
             trim: true,
-            match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"]
+            match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
         },
-        password: { type: String, required: true, minlength: 6 },
-        role: {
+
+        password: { type: String, required: true, minlength: 6, select: false },
+
+        role: { type: String, enum: ["admin", "dealer", "user"], index: true, default: "user", },
+
+        phone: {
             type: String,
-            enum: ["user", "admin", "moderator"],
-            default: "user"
+            // unique: true,
+            trim: true,
+            match: [/^\+?[0-9]{7,15}$/, "Please enter a valid phone number"],
         },
-        phone: { type: String, minlength: 11, maxlength: 15 },
+        aaddress: { type: String },
+        dob: { type: Date },
         image: { type: String },
         status: {
             type: String,
             enum: ["active", "inactive", "banned"],
-            default: "active"
+            default: "active",
+            index: true,
         },
+        isEmailVerified: { type: Boolean, default: false },
+        lastLoginAt: { type: Date },
+        loginAttempts: { type: Number, default: 0 },
+        dealershipId: { type: Schema.Types.ObjectId, ref: "Dealership" },
+        preferences: { language: String, notifications: Schema.Types.Mixed },
     },
-    { timestamps: true } 
+    {
+        timestamps: true,
+        toJSON: {
+            virtuals: true,
+            transform: function (doc, ret) {
+                delete ret.password;
+                delete ret.__v;
+                return ret;
+            },
+        },
+        toObject: { virtuals: true },
+    }
 );
 
-
-// ✅ Apply the soft delete plugin
 userSchema.plugin(softDeletePlugin);
 
 
-export const User = mongoose.models.User || mongoose.model("User", userSchema);
+userSchema.index(
+    { email: 1 },
+    { unique: true, partialFilterExpression: { deletedAt: null } }
+);
 
+userSchema.index(
+    { phone: 1 },
+    { unique: true, partialFilterExpression: { deletedAt: null } }
+);
+
+
+userSchema.index({ role: 1, status: 1 });
+userSchema.index({ dealershipId: 1, role: 1 });
+
+export const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;

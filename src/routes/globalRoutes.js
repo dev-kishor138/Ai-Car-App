@@ -1,17 +1,21 @@
 import express from "express";
-import { loginUser, refreshToken, registerUser } from "../controllers/userController.js";
-import { getAllBlog, getSingleBlog } from "../controllers/blogController.js";
+import { loginUser, refreshToken, registerUser, resetPassword, sendOTP, verifyOTP } from "../controllers/authController.js";
 
 const globalRoutes = express.Router();
 
-//🔗 Global Routes 
+// Global Routes 
 globalRoutes.post("/register", registerUser);
 globalRoutes.post("/login", loginUser);
 globalRoutes.post("/refresh-token", refreshToken);
 
-// blogs 
-globalRoutes.get("/blogs", getAllBlog);
-globalRoutes.get("/blog/:slug", getSingleBlog);
+// Route for sending OTP
+globalRoutes.post("/forgot-password", sendOTP);
+
+// Route for verifying OTP
+globalRoutes.post("/verify-otp", verifyOTP);
+
+// Route for resetting password
+globalRoutes.post("/reset-password", resetPassword);
 
 
 export default globalRoutes;
