@@ -1,4 +1,7 @@
 import express from "express";
+import { editUser } from "../controllers/userController.js";
+import { resetPassword } from "../controllers/authController.js";
+import { createTicket } from "../controllers/ticketController.js";
 
 
 const userRoutes = express.Router();
@@ -10,5 +13,11 @@ userRoutes.get("/profile", (req, res) => {
 });
 
 
+// user manage related Routes
+userRoutes.put('/edit-user/:userId', editUser);
+userRoutes.put('/reset-password', resetPassword);
+
+// help & feedback related routes 
+userRoutes.post('/create-ticket', createTicket);
 
 export default userRoutes;

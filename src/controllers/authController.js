@@ -1,9 +1,13 @@
 import DevBuildError from "../lib/DevBuildError.js";
 import { generateTokens } from "../lib/generateToken.js";
+import OtpCode from "../models/OtpCode.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+
+
+
 
 // ✅ User Registration
 export const registerUser = async (req, res, next) => {
@@ -109,6 +113,7 @@ export const sendOTP = async (req, res, next) => {
         const otp = Math.floor(100000 + Math.random() * 900000); // 6 digit OTP
         const otpExpiration = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
 
+
         // Store OTP and its expiration in the user document (you can store in database or memory)
         user.otp = otp;
         user.otpExpiration = otpExpiration;
@@ -174,22 +179,12 @@ export const verifyOTP = async (req, res, next) => {
 // ✅ Reset Password
 export const resetPassword = async (req, res, next) => {
     try {
-        const { email, otp, newPassword } = req.body;
+        const { email, newPassword } = req.body;
 
         // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
             throw new DevBuildError("User not found", 404);
-        }
-
-        // Check if OTP exists and is valid
-        if (!user.otp || user.otpExpiration < Date.now()) {
-            throw new DevBuildError("Invalid or expired OTP", 400);
-        }
-
-        // Compare the OTP
-        if (user.otp !== otp) {
-            throw new DevBuildError("Invalid OTP", 400);
         }
 
         // Hash the new password
@@ -206,3 +201,5 @@ export const resetPassword = async (req, res, next) => {
         next(error);
     }
 };
+
+

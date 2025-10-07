@@ -27,12 +27,15 @@ const userSchema = new Schema(
         aaddress: { type: String },
         dob: { type: Date },
         image: { type: String },
+        otp: { type: String },
+        otpExpiration: { type: Date },
         status: {
             type: String,
             enum: ["active", "inactive", "banned"],
-            default: "active",
+            default: "inactive",
             index: true,
         },
+
         isEmailVerified: { type: Boolean, default: false },
         lastLoginAt: { type: Date },
         loginAttempts: { type: Number, default: 0 },

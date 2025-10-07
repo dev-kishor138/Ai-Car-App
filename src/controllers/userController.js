@@ -113,3 +113,24 @@ export const confirmDeleteUser = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// ✅ approved user 
+export const approvedUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        // Check if user exists
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new DevBuildError("User not found", 404);
+        }
+
+        user.status = 'active';
+        await user.save();
+
+        res.status(200).json({ message: "User Successfully Aproved" });
+    } catch (error) {
+        next(error);
+    }
+};

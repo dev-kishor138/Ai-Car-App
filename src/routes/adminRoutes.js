@@ -1,5 +1,6 @@
 import express from "express";
-import { createUser, deleteUser, editUser, getAllUser } from "../controllers/userController.js";
+import { approvedUser, createUser, deleteUser, editUser, getAllUser } from "../controllers/userController.js";
+import { resetPassword } from "../controllers/authController.js";
 
 
 
@@ -15,6 +16,8 @@ adminRoutes.post('/create-user', createUser);
 adminRoutes.get('/user-list', getAllUser);
 adminRoutes.put('/edit-user/:userId', editUser);
 adminRoutes.delete('/delete-user/:userId', deleteUser);
+adminRoutes.put('/reset-password', resetPassword);
+adminRoutes.put('/approved-user/:userId', approvedUser);
 
 
 

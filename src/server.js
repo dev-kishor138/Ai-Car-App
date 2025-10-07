@@ -27,7 +27,7 @@ app.use("/user", isAuthenticated, isUser, userRoutes);
 // ✅ admin related routes 
 app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
 // ✅ Dealer related routes 
-app.use("/dealer", isAuthenticated, isDealer, dealerRoutes);
+// app.use("/dealer", isAuthenticated, isDealer, dealerRoutes);
 
 const PORT = process.env.PORT || 5000;
 
