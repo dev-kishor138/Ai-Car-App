@@ -64,10 +64,10 @@ userSchema.index(
     { unique: true, partialFilterExpression: { deletedAt: null } }
 );
 
-userSchema.index(
-    { phone: 1 },
-    { unique: true, partialFilterExpression: { deletedAt: null } }
-);
+// userSchema.index(
+//     { phone: 1 },
+//     { unique: true, partialFilterExpression: { deletedAt: null } }
+// );
 
 
 userSchema.index({ role: 1, status: 1 });
