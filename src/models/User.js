@@ -13,8 +13,9 @@ const userSchema = new Schema(
             trim: true,
             match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
         },
+        firebaseUid: { type: String },
 
-        password: { type: String, required: true, minlength: 6, select: false },
+        password: { type: String, minlength: 6, select: false },
 
         role: { type: String, enum: ["admin", "dealer", "user"], index: true, default: "user", },
 

@@ -1,7 +1,8 @@
 import express from "express";
-import { loginUser, refreshToken, registerUser, resetPassword, sendOTP, verifyOTP } from "../controllers/authController.js";
+import { loginUser, loginWithFirebase, refreshToken, registerUser, resetPassword, sendOTP, verifyOTP } from "../controllers/authController.js";
 import { googleLogin } from "../controllers/googleLogin.js";
 import { carList, debugPage, probeRapid } from "../controllers/carController.js";
+import { verifyFirebaseIdToken } from "../middleware/firebaseAuth.js";
 
 const globalRoutes = express.Router();
 
@@ -9,6 +10,9 @@ const globalRoutes = express.Router();
 globalRoutes.post("/register", registerUser);
 globalRoutes.post("/login", loginUser);
 globalRoutes.post("/refresh-token", refreshToken);
+
+
+globalRoutes.post("/auth/firebase-login", verifyFirebaseIdToken, loginWithFirebase);
 
 // Route for sending OTP
 globalRoutes.post("/forgot-password", sendOTP);

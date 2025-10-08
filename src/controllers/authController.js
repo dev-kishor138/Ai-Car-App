@@ -181,19 +181,16 @@ export const resetPassword = async (req, res, next) => {
     try {
         const { email, newPassword } = req.body;
 
-        // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
             throw new DevBuildError("User not found", 404);
         }
 
-        // Hash the new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        // Update the user's password
         user.password = hashedPassword;
-        user.otp = undefined;  // Clear OTP
-        user.otpExpiration = undefined;  // Clear OTP expiration time
+        user.otp = undefined;  
+        user.otpExpiration = undefined; 
         await user.save();
 
         res.status(200).json({ message: "Password reset successful" });
@@ -203,3 +200,38 @@ export const resetPassword = async (req, res, next) => {
 };
 
 
+export const loginWithFirebase = async (req, res, next) => {
+  try {
+    const { uid, email, name, picture } = req.firebaseUser;
+
+    let user = await User.findOne({ firebaseUid: uid });
+    if (!user) {
+      user = await User.create({
+        firebaseUid: uid,
+        email,
+        name: name || "User",
+        image: picture || null,
+        authProvider: "firebase",
+      });
+    } else {
+      if (!user.image && picture) user.image = picture;
+      if (!user.name && name) user.name = name;
+      await user.save();
+    }
+
+    const accessToken = jwt.sign(
+      { id: user._id, role: user.role || "user" },
+      process.env.JWT_SECRET_TOKEN,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+    );
+
+    res.json({
+      ok: true,
+      message: "Login via Firebase successful",
+      user: { id: user._id, email: user.email, name: user.name, image: user.image },
+      accessToken,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
