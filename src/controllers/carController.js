@@ -7,8 +7,7 @@ import path from "path";
 // getallCar from bd json 
 export const getAllCar = async (req, res, next) => {
     try {
-
-        const filePath = path.resolve("src/db", "carDB.json");
+        const filePath = path.join(process.cwd(), "src/db", "carDB.json");
 
         const data = fs.readFileSync(filePath, "utf-8");
 
