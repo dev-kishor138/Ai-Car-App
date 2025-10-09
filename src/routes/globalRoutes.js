@@ -1,7 +1,7 @@
 import express from "express";
 import { loginUser, loginWithFirebase, refreshToken, registerUser, resetPassword, sendOTP, verifyOTP } from "../controllers/authController.js";
 import { googleLogin } from "../controllers/googleLogin.js";
-import { carList, debugPage, probeRapid } from "../controllers/carController.js";
+import { carList, debugPage, getAllCar, probeRapid } from "../controllers/carController.js";
 // import { verifyFirebaseIdToken } from "../middleware/firebaseAuth.js";
 
 const globalRoutes = express.Router();
@@ -27,7 +27,8 @@ globalRoutes.post("/reset-password", resetPassword);
 globalRoutes.post('/google-login', googleLogin);
 
 // all car list
-globalRoutes.get('/car-list', carList);
+globalRoutes.get('/cars', getAllCar);
+globalRoutes.get('/car-list-scrap', carList);
 globalRoutes.get("/_debug/page", debugPage);
 globalRoutes.get("/_debug/probe-rapid", probeRapid);
 

@@ -1,7 +1,29 @@
 import rapid from "../config/rapidClient.js";
 import { autoscoutFromPage, autoscoutSearch } from "../service/autoscoutService.js";
+import fs from "fs";
+import path from "path";
 
 
+// getallCar from bd json 
+export const getAllCar = async (req, res, next) => {
+    try {
+
+        const filePath = path.resolve("src/db", "carDB.json");
+
+        const data = fs.readFileSync(filePath, "utf-8");
+
+        const cars = JSON.parse(data);
+
+        res.status(200).json({
+            success: true,
+            total: cars.length,
+            data: cars,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 export const carList = async (req, res, next) => {

@@ -1,0 +1,1468 @@
+[
+    {
+        "_id": "6712aa100000000000000001",
+        "dealerId": "66f1d1111111111111111001",
+        "dealer": {
+            "_id": "66f1d1111111111111111001",
+            "name": "Dhaka Auto Mart",
+            "phone": "+880170000001",
+            "email": "sales@dhakaautomart.com"
+        },
+        "sellerUserId": "66f1u1111111111111112001",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112001",
+            "name": "Rashed Karim",
+            "email": "rashed@example.com"
+        },
+        "status": "published",
+        "vin": "WDBUF56X78B123001",
+        "title": "2019 Toyota Corolla SE - Low Mileage",
+        "description": "Single owner, dealer maintained, reverse camera, Apple CarPlay.",
+        "make": "Toyota",
+        "model": "Corolla",
+        "trim": "SE",
+        "year": 2019,
+        "price": 15500,
+        "currency": "USD",
+        "mileage": 32000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "Sedan",
+        "driveType": "FWD",
+        "color": "White",
+        "features": [
+            "Bluetooth",
+            "Backup Camera",
+            "Cruise Control",
+            "Alloy Wheels"
+        ],
+        "specs": {
+            "engineCC": 1800,
+            "horsepower": 132,
+            "torque": 170,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Dhaka",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    90.4125,
+                    23.8103
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113001",
+            "cover": {
+                "_id": "66f1m1111111111111113001",
+                "url": "https://cdn.example.com/cars/1/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113002",
+                "66f1m1111111111111113003"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113002",
+                    "url": "https://cdn.example.com/cars/1/1.jpg",
+                    "mime": "image/jpeg"
+                },
+                {
+                    "_id": "66f1m1111111111111113003",
+                    "url": "https://cdn.example.com/cars/1/2.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "manual",
+            "sourceId": null,
+            "importedAt": null
+        },
+        "ai": {
+            "normalized": {
+                "make": "Toyota",
+                "model": "Corolla",
+                "year": 2019,
+                "trim": "SE"
+            },
+            "valuation": {
+                "priceMin": 14800,
+                "priceMax": 16500,
+                "confidence": 0.82
+            },
+            "embeddingId": "66f1a1111111111111114001"
+        },
+        "metrics": {
+            "views": 128,
+            "saves": 9,
+            "shares": 2,
+            "leadCount": 3
+        },
+        "publishedAt": "2025-10-01T10:15:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-01T09:55:00.000Z",
+        "updatedAt": "2025-10-05T08:20:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000002",
+        "dealerId": "66f1d1111111111111111002",
+        "dealer": {
+            "_id": "66f1d1111111111111111002",
+            "name": "Chattogram Car House",
+            "phone": "+880180000002",
+            "email": "info@carchouse.com"
+        },
+        "sellerUserId": "66f1u1111111111111112002",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112002",
+            "name": "Shaila Nawar",
+            "email": "shaila@example.com"
+        },
+        "status": "published",
+        "vin": "1HGCM82633A004352",
+        "title": "2021 Honda Civic EX with Sunroof",
+        "description": "Showroom condition, adaptive cruise, lane assist.",
+        "make": "Honda",
+        "model": "Civic",
+        "trim": "EX",
+        "year": 2021,
+        "price": 20500,
+        "currency": "USD",
+        "mileage": 21000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "CVT",
+        "bodyType": "Sedan",
+        "driveType": "FWD",
+        "color": "Blue",
+        "features": [
+            "Sunroof",
+            "Lane Assist",
+            "Apple CarPlay",
+            "Android Auto"
+        ],
+        "specs": {
+            "engineCC": 1500,
+            "horsepower": 174,
+            "torque": 220,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Chattogram",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.7832,
+                    22.3569
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113101",
+            "cover": {
+                "_id": "66f1m1111111111111113101",
+                "url": "https://cdn.example.com/cars/2/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113102",
+                "66f1m1111111111111113103"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113102",
+                    "url": "https://cdn.example.com/cars/2/1.jpg",
+                    "mime": "image/jpeg"
+                },
+                {
+                    "_id": "66f1m1111111111111113103",
+                    "url": "https://cdn.example.com/cars/2/2.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "api",
+            "sourceId": "EXT-CHH-2021-0002",
+            "importedAt": "2025-09-30T07:10:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "Honda",
+                "model": "Civic",
+                "year": 2021,
+                "trim": "EX"
+            },
+            "valuation": {
+                "priceMin": 19800,
+                "priceMax": 21800,
+                "confidence": 0.79
+            },
+            "embeddingId": "66f1a1111111111111114101"
+        },
+        "metrics": {
+            "views": 94,
+            "saves": 7,
+            "shares": 1,
+            "leadCount": 2
+        },
+        "publishedAt": "2025-10-02T12:00:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-02T11:45:00.000Z",
+        "updatedAt": "2025-10-04T16:30:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000003",
+        "dealerId": "66f1d1111111111111111001",
+        "dealer": {
+            "_id": "66f1d1111111111111111001",
+            "name": "Dhaka Auto Mart",
+            "phone": "+880170000001",
+            "email": "sales@dhakaautomart.com"
+        },
+        "sellerUserId": "66f1u1111111111111112003",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112003",
+            "name": "Fahim Ahmed",
+            "email": "fahim@example.com"
+        },
+        "status": "published",
+        "vin": "WAULC68E65A123456",
+        "title": "2018 Audi A4 Premium Plus",
+        "description": "Quattro, Bang & Olufsen audio, leather seats.",
+        "make": "Audi",
+        "model": "A4",
+        "trim": "Premium Plus",
+        "year": 2018,
+        "price": 23500,
+        "currency": "USD",
+        "mileage": 45000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "Sedan",
+        "driveType": "AWD",
+        "color": "Black",
+        "features": [
+            "AWD",
+            "Leather Seats",
+            "Premium Audio",
+            "Navigation"
+        ],
+        "specs": {
+            "engineCC": 2000,
+            "horsepower": 252,
+            "torque": 370,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Dhaka",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    90.414,
+                    23.79
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113201",
+            "cover": {
+                "_id": "66f1m1111111111111113201",
+                "url": "https://cdn.example.com/cars/3/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113202",
+                "66f1m1111111111111113203",
+                "66f1m1111111111111113204"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113202",
+                    "url": "https://cdn.example.com/cars/3/1.jpg",
+                    "mime": "image/jpeg"
+                },
+                {
+                    "_id": "66f1m1111111111111113203",
+                    "url": "https://cdn.example.com/cars/3/2.jpg",
+                    "mime": "image/jpeg"
+                },
+                {
+                    "_id": "66f1m1111111111111113204",
+                    "url": "https://cdn.example.com/cars/3/3.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "scraped",
+            "sourceId": "SCRP-DA-8891",
+            "importedAt": "2025-09-28T09:00:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "Audi",
+                "model": "A4",
+                "year": 2018,
+                "drivetrain": "Quattro"
+            },
+            "valuation": {
+                "priceMin": 22500,
+                "priceMax": 24500,
+                "confidence": 0.77
+            },
+            "embeddingId": "66f1a1111111111111114201"
+        },
+        "metrics": {
+            "views": 220,
+            "saves": 18,
+            "shares": 5,
+            "leadCount": 6
+        },
+        "publishedAt": "2025-10-03T08:30:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-03T08:10:00.000Z",
+        "updatedAt": "2025-10-08T06:00:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000004",
+        "dealerId": "66f1d1111111111111111003",
+        "dealer": {
+            "_id": "66f1d1111111111111111003",
+            "name": "Sylhet Premium Motors",
+            "phone": "+880190000003",
+            "email": "contact@sylhetmotors.com"
+        },
+        "sellerUserId": "66f1u1111111111111112004",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112004",
+            "name": "Nusrat Jahan",
+            "email": "nusrat@example.com"
+        },
+        "status": "published",
+        "vin": "JTDKN3DU0A0004321",
+        "title": "2020 Toyota Prius Hybrid",
+        "description": "Excellent fuel economy, adaptive headlights.",
+        "make": "Toyota",
+        "model": "Prius",
+        "trim": "Hybrid",
+        "year": 2020,
+        "price": 22000,
+        "currency": "USD",
+        "mileage": 28000,
+        "condition": "used",
+        "fuelType": "Hybrid",
+        "transmission": "Automatic",
+        "bodyType": "Hatchback",
+        "driveType": "FWD",
+        "color": "Silver",
+        "features": [
+            "Keyless Entry",
+            "Adaptive Headlights",
+            "Heated Seats"
+        ],
+        "specs": {
+            "engineCC": 1800,
+            "horsepower": 121,
+            "torque": 142,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Sylhet",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.8687,
+                    24.8949
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113301",
+            "cover": {
+                "_id": "66f1m1111111111111113301",
+                "url": "https://cdn.example.com/cars/4/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113302"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113302",
+                    "url": "https://cdn.example.com/cars/4/1.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "manual",
+            "sourceId": null,
+            "importedAt": null
+        },
+        "ai": {
+            "normalized": {
+                "make": "Toyota",
+                "model": "Prius",
+                "year": 2020
+            },
+            "valuation": {
+                "priceMin": 21000,
+                "priceMax": 23000,
+                "confidence": 0.81
+            },
+            "embeddingId": "66f1a1111111111111114301"
+        },
+        "metrics": {
+            "views": 76,
+            "saves": 6,
+            "shares": 1,
+            "leadCount": 1
+        },
+        "publishedAt": "2025-10-04T09:00:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-04T08:40:00.000Z",
+        "updatedAt": "2025-10-04T12:10:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000005",
+        "dealerId": "66f1d1111111111111111002",
+        "dealer": {
+            "_id": "66f1d1111111111111111002",
+            "name": "Chattogram Car House",
+            "phone": "+880180000002",
+            "email": "info@carchouse.com"
+        },
+        "sellerUserId": "66f1u1111111111111112005",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112005",
+            "name": "Tanvir Rahman",
+            "email": "tanvir@example.com"
+        },
+        "status": "published",
+        "vin": "5YJ3E1EA7JF000123",
+        "title": "2019 Tesla Model 3 Standard Range Plus",
+        "description": "Autopilot, OTA updates, great condition.",
+        "make": "Tesla",
+        "model": "Model 3",
+        "trim": "SR+",
+        "year": 2019,
+        "price": 28900,
+        "currency": "USD",
+        "mileage": 36000,
+        "condition": "used",
+        "fuelType": "Electric",
+        "transmission": "Single Speed",
+        "bodyType": "Sedan",
+        "driveType": "RWD",
+        "color": "Red",
+        "features": [
+            "Autopilot",
+            "Heated Seats",
+            "Glass Roof",
+            "Navigation"
+        ],
+        "specs": {
+            "engineCC": null,
+            "horsepower": 283,
+            "torque": 430,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Chattogram",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.80,
+                    22.36
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113401",
+            "cover": {
+                "_id": "66f1m1111111111111113401",
+                "url": "https://cdn.example.com/cars/5/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113402",
+                "66f1m1111111111111113403"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113402",
+                    "url": "https://cdn.example.com/cars/5/1.jpg",
+                    "mime": "image/jpeg"
+                },
+                {
+                    "_id": "66f1m1111111111111113403",
+                    "url": "https://cdn.example.com/cars/5/2.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "api",
+            "sourceId": "TES-EXT-99221",
+            "importedAt": "2025-10-01T06:00:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "Tesla",
+                "model": "Model 3",
+                "year": 2019,
+                "battery": "SR+"
+            },
+            "valuation": {
+                "priceMin": 27500,
+                "priceMax": 30500,
+                "confidence": 0.74
+            },
+            "embeddingId": "66f1a1111111111111114401"
+        },
+        "metrics": {
+            "views": 310,
+            "saves": 24,
+            "shares": 7,
+            "leadCount": 9
+        },
+        "publishedAt": "2025-10-04T10:20:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-01T06:10:00.000Z",
+        "updatedAt": "2025-10-07T13:00:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000006",
+        "dealerId": "66f1d1111111111111111003",
+        "dealer": {
+            "_id": "66f1d1111111111111111003",
+            "name": "Sylhet Premium Motors",
+            "phone": "+880190000003",
+            "email": "contact@sylhetmotors.com"
+        },
+        "sellerUserId": "66f1u1111111111111112006",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112006",
+            "name": "Mahmud Hasan",
+            "email": "mahmud@example.com"
+        },
+        "status": "published",
+        "vin": "SALVP2BG7HH000987",
+        "title": "2017 Range Rover Evoque HSE",
+        "description": "Panoramic roof, Meridian sound, AWD.",
+        "make": "Land Rover",
+        "model": "Range Rover Evoque",
+        "trim": "HSE",
+        "year": 2017,
+        "price": 27500,
+        "currency": "USD",
+        "mileage": 52000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "SUV",
+        "driveType": "AWD",
+        "color": "Grey",
+        "features": [
+            "Panoramic Roof",
+            "AWD",
+            "Leather",
+            "Parking Sensors"
+        ],
+        "specs": {
+            "engineCC": 2000,
+            "horsepower": 237,
+            "torque": 340,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Sylhet",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.87,
+                    24.90
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113501",
+            "cover": {
+                "_id": "66f1m1111111111111113501",
+                "url": "https://cdn.example.com/cars/6/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113502"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113502",
+                    "url": "https://cdn.example.com/cars/6/1.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "manual",
+            "sourceId": null,
+            "importedAt": null
+        },
+        "ai": {
+            "normalized": {
+                "make": "Land Rover",
+                "model": "Range Rover Evoque",
+                "year": 2017
+            },
+            "valuation": {
+                "priceMin": 26000,
+                "priceMax": 28500,
+                "confidence": 0.7
+            },
+            "embeddingId": "66f1a1111111111111114501"
+        },
+        "metrics": {
+            "views": 141,
+            "saves": 10,
+            "shares": 2,
+            "leadCount": 2
+        },
+        "publishedAt": "2025-10-03T11:10:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-03T10:50:00.000Z",
+        "updatedAt": "2025-10-05T12:00:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000007",
+        "dealerId": "66f1d1111111111111111001",
+        "dealer": {
+            "_id": "66f1d1111111111111111001",
+            "name": "Dhaka Auto Mart",
+            "phone": "+880170000001",
+            "email": "sales@dhakaautomart.com"
+        },
+        "sellerUserId": "66f1u1111111111111112007",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112007",
+            "name": "Ruma Sultana",
+            "email": "ruma@example.com"
+        },
+        "status": "published",
+        "vin": "1FTEW1E55KFA00123",
+        "title": "2019 Ford F-150 XLT 4x4",
+        "description": "Crew cab, tow package, bed liner.",
+        "make": "Ford",
+        "model": "F-150",
+        "trim": "XLT",
+        "year": 2019,
+        "price": 29900,
+        "currency": "USD",
+        "mileage": 61000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "Pickup",
+        "driveType": "4WD",
+        "color": "White",
+        "features": [
+            "Tow Package",
+            "Bed Liner",
+            "4x4",
+            "Bluetooth"
+        ],
+        "specs": {
+            "engineCC": 3500,
+            "horsepower": 375,
+            "torque": 470,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Gazipur",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    90.4203,
+                    24.0023
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113601",
+            "cover": {
+                "_id": "66f1m1111111111111113601",
+                "url": "https://cdn.example.com/cars/7/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [],
+            "gallery": []
+        },
+        "source": {
+            "type": "scraped",
+            "sourceId": "FRD-F150-2019-7788",
+            "importedAt": "2025-09-27T05:00:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "Ford",
+                "model": "F-150",
+                "year": 2019,
+                "drivetrain": "4x4"
+            },
+            "valuation": {
+                "priceMin": 28500,
+                "priceMax": 31500,
+                "confidence": 0.73
+            },
+            "embeddingId": "66f1a1111111111111114601"
+        },
+        "metrics": {
+            "views": 260,
+            "saves": 16,
+            "shares": 3,
+            "leadCount": 4
+        },
+        "publishedAt": "2025-10-02T09:45:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-02T09:30:00.000Z",
+        "updatedAt": "2025-10-06T14:20:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000008",
+        "dealerId": "66f1d1111111111111111002",
+        "dealer": {
+            "_id": "66f1d1111111111111111002",
+            "name": "Chattogram Car House",
+            "phone": "+880180000002",
+            "email": "info@carchouse.com"
+        },
+        "sellerUserId": "66f1u1111111111111112008",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112008",
+            "name": "Jahidul Islam",
+            "email": "jahidul@example.com"
+        },
+        "status": "published",
+        "vin": "JHMFC1F3XJX000777",
+        "title": "2018 Honda Accord Touring",
+        "description": "Heads-up display, ventilated seats.",
+        "make": "Honda",
+        "model": "Accord",
+        "trim": "Touring",
+        "year": 2018,
+        "price": 21500,
+        "currency": "USD",
+        "mileage": 58000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "Sedan",
+        "driveType": "FWD",
+        "color": "Grey",
+        "features": [
+            "HUD",
+            "Ventilated Seats",
+            "Adaptive Cruise"
+        ],
+        "specs": {
+            "engineCC": 2000,
+            "horsepower": 252,
+            "torque": 370,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Chattogram",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.75,
+                    22.35
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113701",
+            "cover": {
+                "_id": "66f1m1111111111111113701",
+                "url": "https://cdn.example.com/cars/8/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113702"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113702",
+                    "url": "https://cdn.example.com/cars/8/1.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "manual",
+            "sourceId": null,
+            "importedAt": null
+        },
+        "ai": {
+            "normalized": {
+                "make": "Honda",
+                "model": "Accord",
+                "year": 2018
+            },
+            "valuation": {
+                "priceMin": 20500,
+                "priceMax": 22500,
+                "confidence": 0.78
+            },
+            "embeddingId": "66f1a1111111111111114701"
+        },
+        "metrics": {
+            "views": 88,
+            "saves": 8,
+            "shares": 1,
+            "leadCount": 2
+        },
+        "publishedAt": "2025-10-05T10:00:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-05T09:40:00.000Z",
+        "updatedAt": "2025-10-05T11:00:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa100000000000000009",
+        "dealerId": "66f1d1111111111111111001",
+        "dealer": {
+            "_id": "66f1d1111111111111111001",
+            "name": "Dhaka Auto Mart",
+            "phone": "+880170000001",
+            "email": "sales@dhakaautomart.com"
+        },
+        "sellerUserId": "66f1u1111111111111112009",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112009",
+            "name": "Ariana Zaman",
+            "email": "ariana@example.com"
+        },
+        "status": "published",
+        "vin": "ZAM57XSA7E1087654",
+        "title": "2016 BMW X5 xDrive35i",
+        "description": "M Sport package, 3rd row optional.",
+        "make": "BMW",
+        "model": "X5",
+        "trim": "xDrive35i",
+        "year": 2016,
+        "price": 23900,
+        "currency": "USD",
+        "mileage": 78000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "SUV",
+        "driveType": "AWD",
+        "color": "Black",
+        "features": [
+            "M Sport",
+            "Panoramic Roof",
+            "Navigation"
+        ],
+        "specs": {
+            "engineCC": 3000,
+            "horsepower": 300,
+            "torque": 400,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Dhaka",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    90.39,
+                    23.77
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113801",
+            "cover": {
+                "_id": "66f1m1111111111111113801",
+                "url": "https://cdn.example.com/cars/9/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [],
+            "gallery": []
+        },
+        "source": {
+            "type": "scraped",
+            "sourceId": "BMW-X5-2016-1982",
+            "importedAt": "2025-09-26T12:00:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "BMW",
+                "model": "X5",
+                "year": 2016
+            },
+            "valuation": {
+                "priceMin": 22500,
+                "priceMax": 24500,
+                "confidence": 0.69
+            },
+            "embeddingId": "66f1a1111111111111114801"
+        },
+        "metrics": {
+            "views": 190,
+            "saves": 15,
+            "shares": 4,
+            "leadCount": 3
+        },
+        "publishedAt": "2025-10-01T13:00:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-01T12:40:00.000Z",
+        "updatedAt": "2025-10-03T09:00:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa10000000000000000a",
+        "dealerId": "66f1d1111111111111111003",
+        "dealer": {
+            "_id": "66f1d1111111111111111003",
+            "name": "Sylhet Premium Motors",
+            "phone": "+880190000003",
+            "email": "contact@sylhetmotors.com"
+        },
+        "sellerUserId": "66f1u1111111111111112010",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112010",
+            "name": "Sadia Akter",
+            "email": "sadia@example.com"
+        },
+        "status": "published",
+        "vin": "WVWZZZ3CZEE000432",
+        "title": "2017 Volkswagen Golf GTI",
+        "description": "Performance pack, DSG, great handling.",
+        "make": "Volkswagen",
+        "model": "Golf",
+        "trim": "GTI",
+        "year": 2017,
+        "price": 17500,
+        "currency": "USD",
+        "mileage": 67000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "DSG",
+        "bodyType": "Hatchback",
+        "driveType": "FWD",
+        "color": "White",
+        "features": [
+            "Performance Pack",
+            "DSG",
+            "Sport Seats"
+        ],
+        "specs": {
+            "engineCC": 2000,
+            "horsepower": 220,
+            "torque": 350,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Sylhet",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.86,
+                    24.90
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111113901",
+            "cover": {
+                "_id": "66f1m1111111111111113901",
+                "url": "https://cdn.example.com/cars/10/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111113902"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111113902",
+                    "url": "https://cdn.example.com/cars/10/1.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "manual",
+            "sourceId": null,
+            "importedAt": null
+        },
+        "ai": {
+            "normalized": {
+                "make": "Volkswagen",
+                "model": "Golf",
+                "year": 2017,
+                "trim": "GTI"
+            },
+            "valuation": {
+                "priceMin": 16800,
+                "priceMax": 18500,
+                "confidence": 0.75
+            },
+            "embeddingId": "66f1a1111111111111114901"
+        },
+        "metrics": {
+            "views": 120,
+            "saves": 9,
+            "shares": 1,
+            "leadCount": 2
+        },
+        "publishedAt": "2025-10-06T08:20:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-06T08:00:00.000Z",
+        "updatedAt": "2025-10-06T12:00:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa10000000000000000b",
+        "dealerId": "66f1d1111111111111111001",
+        "dealer": {
+            "_id": "66f1d1111111111111111001",
+            "name": "Dhaka Auto Mart",
+            "phone": "+880170000001",
+            "email": "sales@dhakaautomart.com"
+        },
+        "sellerUserId": "66f1u1111111111111112011",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112011",
+            "name": "Bashir Uddin",
+            "email": "bashir@example.com"
+        },
+        "status": "published",
+        "vin": "3N1AB7AP3GY000321",
+        "title": "2019 Nissan Sentra SV",
+        "description": "Economical daily driver.",
+        "make": "Nissan",
+        "model": "Sentra",
+        "trim": "SV",
+        "year": 2019,
+        "price": 12800,
+        "currency": "USD",
+        "mileage": 42000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "CVT",
+        "bodyType": "Sedan",
+        "driveType": "FWD",
+        "color": "Silver",
+        "features": [
+            "Bluetooth",
+            "Backup Camera"
+        ],
+        "specs": {
+            "engineCC": 1800,
+            "horsepower": 124,
+            "torque": 169,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Narayanganj",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    90.498,
+                    23.623
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111114001",
+            "cover": {
+                "_id": "66f1m1111111111111114001",
+                "url": "https://cdn.example.com/cars/11/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [],
+            "gallery": []
+        },
+        "source": {
+            "type": "api",
+            "sourceId": "NIS-SEN-2019-111",
+            "importedAt": "2025-09-29T06:30:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "Nissan",
+                "model": "Sentra",
+                "year": 2019
+            },
+            "valuation": {
+                "priceMin": 12000,
+                "priceMax": 13500,
+                "confidence": 0.8
+            },
+            "embeddingId": "66f1a1111111111111115001"
+        },
+        "metrics": {
+            "views": 60,
+            "saves": 5,
+            "shares": 0,
+            "leadCount": 1
+        },
+        "publishedAt": "2025-10-03T07:00:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-02T23:00:00.000Z",
+        "updatedAt": "2025-10-03T09:10:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa10000000000000000c",
+        "dealerId": "66f1d1111111111111111002",
+        "dealer": {
+            "_id": "66f1d1111111111111111002",
+            "name": "Chattogram Car House",
+            "phone": "+880180000002",
+            "email": "info@carchouse.com"
+        },
+        "sellerUserId": "66f1u1111111111111112012",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112012",
+            "name": "Shuvo Ghosh",
+            "email": "shuvo@example.com"
+        },
+        "status": "published",
+        "vin": "2T3B1RFV0KW012345",
+        "title": "2019 Toyota RAV4 LE",
+        "description": "Reliable compact SUV with safety suite.",
+        "make": "Toyota",
+        "model": "RAV4",
+        "trim": "LE",
+        "year": 2019,
+        "price": 22900,
+        "currency": "USD",
+        "mileage": 39000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "SUV",
+        "driveType": "FWD",
+        "color": "Blue",
+        "features": [
+            "Toyota Safety Sense",
+            "Lane Keep",
+            "Adaptive Cruise"
+        ],
+        "specs": {
+            "engineCC": 2500,
+            "horsepower": 203,
+            "torque": 249,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Chattogram",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.78,
+                    22.34
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111114101",
+            "cover": {
+                "_id": "66f1m1111111111111114101",
+                "url": "https://cdn.example.com/cars/12/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111114102"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111114102",
+                    "url": "https://cdn.example.com/cars/12/1.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "scraped",
+            "sourceId": "RAV4-LE-2019-CHH",
+            "importedAt": "2025-09-25T10:00:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "Toyota",
+                "model": "RAV4",
+                "year": 2019
+            },
+            "valuation": {
+                "priceMin": 22000,
+                "priceMax": 23500,
+                "confidence": 0.76
+            },
+            "embeddingId": "66f1a1111111111111115101"
+        },
+        "metrics": {
+            "views": 100,
+            "saves": 7,
+            "shares": 1,
+            "leadCount": 2
+        },
+        "publishedAt": "2025-10-04T06:30:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-03T18:40:00.000Z",
+        "updatedAt": "2025-10-04T06:40:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa10000000000000000d",
+        "dealerId": "66f1d1111111111111111003",
+        "dealer": {
+            "_id": "66f1d1111111111111111003",
+            "name": "Sylhet Premium Motors",
+            "phone": "+880190000003",
+            "email": "contact@sylhetmotors.com"
+        },
+        "sellerUserId": "66f1u1111111111111112013",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112013",
+            "name": "Rifat Alam",
+            "email": "rifat@example.com"
+        },
+        "status": "published",
+        "vin": "WDD2130421A123987",
+        "title": "2018 Mercedes-Benz E 300",
+        "description": "Luxury sedan with advanced safety.",
+        "make": "Mercedes-Benz",
+        "model": "E-Class",
+        "trim": "E 300",
+        "year": 2018,
+        "price": 28500,
+        "currency": "USD",
+        "mileage": 50000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "Sedan",
+        "driveType": "RWD",
+        "color": "Silver",
+        "features": [
+            "Ambient Lighting",
+            "Blind Spot",
+            "Memory Seats"
+        ],
+        "specs": {
+            "engineCC": 2000,
+            "horsepower": 241,
+            "torque": 370,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Sylhet",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.88,
+                    24.90
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111114201",
+            "cover": {
+                "_id": "66f1m1111111111111114201",
+                "url": "https://cdn.example.com/cars/13/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [],
+            "gallery": []
+        },
+        "source": {
+            "type": "manual",
+            "sourceId": null,
+            "importedAt": null
+        },
+        "ai": {
+            "normalized": {
+                "make": "Mercedes-Benz",
+                "model": "E-Class",
+                "year": 2018
+            },
+            "valuation": {
+                "priceMin": 27500,
+                "priceMax": 29500,
+                "confidence": 0.71
+            },
+            "embeddingId": "66f1a1111111111111115201"
+        },
+        "metrics": {
+            "views": 160,
+            "saves": 11,
+            "shares": 2,
+            "leadCount": 3
+        },
+        "publishedAt": "2025-10-05T12:30:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-05T12:10:00.000Z",
+        "updatedAt": "2025-10-05T12:20:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    },
+    {
+        "_id": "6712aa10000000000000000e",
+        "dealerId": "66f1d1111111111111111002",
+        "dealer": {
+            "_id": "66f1d1111111111111111002",
+            "name": "Chattogram Car House",
+            "phone": "+880180000002",
+            "email": "info@carchouse.com"
+        },
+        "sellerUserId": "66f1u1111111111111112014",
+        "sellerUser": {
+            "_id": "66f1u1111111111111112014",
+            "name": "Ayesha Rahman",
+            "email": "ayesha@example.com"
+        },
+        "status": "published",
+        "vin": "1C4PJMDX6KD123654",
+        "title": "2019 Jeep Cherokee Limited 4x4",
+        "description": "Selectable terrain modes, leather, remote start.",
+        "make": "Jeep",
+        "model": "Cherokee",
+        "trim": "Limited",
+        "year": 2019,
+        "price": 19900,
+        "currency": "USD",
+        "mileage": 49000,
+        "condition": "used",
+        "fuelType": "Petrol",
+        "transmission": "Automatic",
+        "bodyType": "SUV",
+        "driveType": "4WD",
+        "color": "Grey",
+        "features": [
+            "Remote Start",
+            "Leather",
+            "4x4 Modes"
+        ],
+        "specs": {
+            "engineCC": 3200,
+            "horsepower": 271,
+            "torque": 324,
+            "doors": 4,
+            "seats": 5
+        },
+        "location": {
+            "city": "Chattogram",
+            "country": "Bangladesh",
+            "geo": {
+                "type": "Point",
+                "coordinates": [
+                    91.79,
+                    22.33
+                ]
+            }
+        },
+        "media": {
+            "coverId": "66f1m1111111111111114301",
+            "cover": {
+                "_id": "66f1m1111111111111114301",
+                "url": "https://cdn.example.com/cars/14/cover.jpg",
+                "mime": "image/jpeg"
+            },
+            "galleryIds": [
+                "66f1m1111111111111114302"
+            ],
+            "gallery": [
+                {
+                    "_id": "66f1m1111111111111114302",
+                    "url": "https://cdn.example.com/cars/14/1.jpg",
+                    "mime": "image/jpeg"
+                }
+            ]
+        },
+        "source": {
+            "type": "api",
+            "sourceId": "JEEP-CHK-2019-CHH",
+            "importedAt": "2025-09-30T08:00:00.000Z"
+        },
+        "ai": {
+            "normalized": {
+                "make": "Jeep",
+                "model": "Cherokee",
+                "year": 2019,
+                "drivetrain": "4x4"
+            },
+            "valuation": {
+                "priceMin": 18800,
+                "priceMax": 20500,
+                "confidence": 0.7
+            },
+            "embeddingId": "66f1a1111111111111115301"
+        },
+        "metrics": {
+            "views": 110,
+            "saves": 8,
+            "shares": 1,
+            "leadCount": 2
+        },
+        "publishedAt": "2025-10-02T10:00:00.000Z",
+        "soldAt": null,
+        "createdAt": "2025-10-01T18:10:00.000Z",
+        "updatedAt": "2025-10-03T10:10:00.000Z",
+        "isDeleted": false,
+        "deletedAt": null
+    }
+]
