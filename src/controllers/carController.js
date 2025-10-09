@@ -1,7 +1,7 @@
 // import rapid from "../config/rapidClient.js";
 // import { autoscoutFromPage, autoscoutSearch } from "../service/autoscoutService.js";
-import fs from "fs";
-import path from "path";
+// import fs from "fs";
+// import path from "path";
 import Car from "../models/Car.js";
 
 
