@@ -2,16 +2,17 @@
 // import { autoscoutFromPage, autoscoutSearch } from "../service/autoscoutService.js";
 import fs from "fs";
 import path from "path";
+import Car from "../models/Car";
 
 
 // getallCar from bd json 
 export const getAllCar = async (req, res, next) => {
     try {
-        const filePath = path.join(process.cwd(), "src/db", "carDB.json");
+        const cars = await Car.find({});
 
-        const data = fs.readFileSync(filePath, "utf-8");
-
-        const cars = JSON.parse(data);
+        if (!cars) {
+            throw new Error("No cars found");
+        }
 
         res.status(200).json({
             success: true,
