@@ -25,3 +25,28 @@ export const createTicket = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// ✅ get all Ticket
+export const getAllTicket = async (req, res, next) => {
+    try {
+
+        const tickets = await Ticket.find()
+            .populate("userId", "name email phone")
+            .sort({ createdAt: -1 });
+
+        if (!tickets.length) {
+            return res.status(404).json({ message: "No tickets found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            total: tickets.length,
+            data: tickets,
+        });
+
+    } catch (error) {
+        console.error("Error fetching Tickets:", error);
+        next(error);
+    }
+};

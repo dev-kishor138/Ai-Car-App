@@ -1,6 +1,8 @@
 import express from "express";
 import { approvedUser, createUser, deleteUser, editUser, getAllUser } from "../controllers/userController.js";
 import { resetPassword } from "../controllers/authController.js";
+import { getAllTicket } from "../controllers/ticketController.js";
+import { getAllCar } from "../controllers/carController.js";
 
 
 
@@ -18,6 +20,12 @@ adminRoutes.put('/edit-user/:userId', editUser);
 adminRoutes.delete('/delete-user/:userId', deleteUser);
 adminRoutes.put('/reset-password', resetPassword);
 adminRoutes.put('/approved-user/:userId', approvedUser);
+
+// ticket related routes
+adminRoutes.get('/tickets', getAllTicket);
+
+// car related routes 
+adminRoutes.get('/cars', getAllCar);
 
 
 

@@ -6,15 +6,13 @@ import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import globalRoutes from "./routes/globalRoutes.js";
-import { createServer } from "http";
-import { Server } from "socket.io";
 import dealerRoutes from "./routes/dealerRoutes.js";
 import { isAuthenticated } from "./middleware/authMiddleware.js";
 import { isAdmin, isDealer, isUser } from "./middleware/roleMiddleware.js";
 
 dotenv.config();
 const app = express();
-connectDB();
+await connectDB();
 // Enable CORS for all routes
 app.use(cors());
 // Middleware to parse JSON
@@ -38,40 +36,42 @@ app.get("/", (req, res) => {
 // ✅ Error Handling Middleware 
 app.use(errorHandler);
 
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
 
 // ===================================
 // 🟢 SOCKET.IO CONFIGURATION STARTS
 // ===================================
 
-const httpServer = createServer(app);
+// const httpServer = createServer(app);
 
-// initialize Socket.io 
-const io = new Server(httpServer, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-});
+// // initialize Socket.io
+// const io = new Server(httpServer, {
+//     cors: {
+//         origin: "*",
+//         methods: ["GET", "POST"]
+//     }
+// });
 
-io.on("connection", (socket) => {
-    console.log("user connected: ", socket.id);
+// io.on("connection", (socket) => {
+//     console.log("user connected: ", socket.id);
 
-    socket.on("disconnect", () => {
-        console.log("user disconnected: ", socket.id)
-    })
-})
+//     socket.on("disconnect", () => {
+//         console.log("user disconnected: ", socket.id)
+//     })
+// })
 
 
-app.set("io", io);
+// app.set("io", io);
 
 // ===================================
 // 🟢 SOCKET.IO CONFIGURATION ENDS
 // ===================================
 
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-// });
 
-httpServer.listen(PORT, '0.0.0.0', () => {
-    console.log(`server is running on port ${PORT}`)
-})
+
+// httpServer.listen(PORT, '0.0.0.0', () => {
+//     console.log(`server is running on port ${PORT}`)
+// })
