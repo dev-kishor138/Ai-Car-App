@@ -2,7 +2,7 @@
 // import { autoscoutFromPage, autoscoutSearch } from "../service/autoscoutService.js";
 import fs from "fs";
 import path from "path";
-import Car from "../models/Car";
+import Car from "../models/Car.js";
 
 
 // getallCar from bd json 
