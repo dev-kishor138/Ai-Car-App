@@ -21,13 +21,13 @@ const userSchema = new Schema(
 
         phone: {
             type: String,
-            // unique: true,
+            default: null,
             trim: true,
             match: [/^\+?[0-9]{7,15}$/, "Please enter a valid phone number"],
         },
         aaddress: { type: String },
         dob: { type: Date },
-        image: { type: String },
+        image: { type: String, default: null },
         otp: { type: String },
         otpExpiration: { type: Date },
         status: {
