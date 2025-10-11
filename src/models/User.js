@@ -32,8 +32,8 @@ const userSchema = new Schema(
         otpExpiration: { type: Date },
         status: {
             type: String,
-            enum: ["active", "inactive", "banned"],
-            default: "inactive",
+            enum: ["active", "inactive", "banned", 'pending'],
+            default: "pending",
             index: true,
         },
 

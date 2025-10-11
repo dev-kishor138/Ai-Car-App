@@ -15,7 +15,7 @@ dotenv.config();
 
 const app = express();
 
-// DB connect (serverless-এ মডিউল লোডের সময় একবার চালালেই যথেষ্ট)
+// DB connect
 await connectDB();
 
 app.use(cors());

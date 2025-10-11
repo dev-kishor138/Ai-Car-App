@@ -32,8 +32,8 @@ favoriteSchema.index({ userId: 1, carId: 1 }, { unique: true });
  * - Fast "My Saved Cars" listing sorted by recency
  * - Fast reporting: how many users saved a specific car
  */
-favoriteSchema.index({ userId: 1, createdAt: -1 });
-favoriteSchema.index({ carId: 1 });
+// favoriteSchema.index({ userId: 1, createdAt: -1 });
+// favoriteSchema.index({ carId: 1 });
 
 export const Favorite =
   mongoose.models.Favorite || mongoose.model("Favorite", favoriteSchema);
