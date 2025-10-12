@@ -40,38 +40,3 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-
-// ===================================
-// 🟢 SOCKET.IO CONFIGURATION STARTS
-// ===================================
-
-// const httpServer = createServer(app);
-
-// // initialize Socket.io
-// const io = new Server(httpServer, {
-//     cors: {
-//         origin: "*",
-//         methods: ["GET", "POST"]
-//     }
-// });
-
-// io.on("connection", (socket) => {
-//     console.log("user connected: ", socket.id);
-
-//     socket.on("disconnect", () => {
-//         console.log("user disconnected: ", socket.id)
-//     })
-// })
-
-
-// app.set("io", io);
-
-// ===================================
-// 🟢 SOCKET.IO CONFIGURATION ENDS
-// ===================================
-
-
-
-// httpServer.listen(PORT, '0.0.0.0', () => {
-//     console.log(`server is running on port ${PORT}`)
-// })
