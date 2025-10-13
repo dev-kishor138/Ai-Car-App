@@ -9,6 +9,7 @@ import globalRoutes from "./routes/globalRoutes.js";
 import dealerRoutes from "./routes/dealerRoutes.js";
 import { isAuthenticated } from "./middleware/authMiddleware.js";
 import { isAdmin, isDealer, isUser } from "./middleware/roleMiddleware.js";
+import { checkSubscription } from "./middleware/checkSubscription.js";
 
 dotenv.config();
 const app = express();
@@ -20,23 +21,22 @@ app.use(express.json());
 
 // ✅ Global routes
 app.use("/", globalRoutes);
-// ✅ user related routes 
-app.use("/user", isAuthenticated, isUser, userRoutes);
-// ✅ admin related routes 
+// ✅ user related routes
+app.use("/user", isAuthenticated, isUser, checkSubscription, userRoutes);
+// ✅ admin related routes
 app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
-// ✅ Dealer related routes 
+// ✅ Dealer related routes
 // app.use("/dealer", isAuthenticated, isDealer, dealerRoutes);
 
 const PORT = process.env.PORT || 5000;
 
 app.get("/", (req, res) => {
-    res.send("Hello, World!");
+  res.send("Request From Server");
 });
 
-// ✅ Error Handling Middleware 
+// ✅ Error Handling Middleware
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
-

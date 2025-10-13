@@ -8,6 +8,10 @@ const planSchema = new Schema(
     // Plan description for the users to understand what features they will get
     description: { type: String, required: true },
 
+    // Stripe Integration
+    stripePriceId: { type: String, required: false }, // Stripe price ID
+    stripeProductId: { type: String, required: false }, // Stripe product ID
+
     // Price of the plan in your chosen currency (e.g., USD, EUR)
     price: { type: Number, required: true },
 
@@ -15,7 +19,11 @@ const planSchema = new Schema(
     currency: { type: String, default: "USD" },
 
     // Billing cycle (e.g., "monthly", "yearly")
-    billingCycle: { type: String, enum: ["monthly", "yearly"], default: "monthly" },
+    billingCycle: {
+      type: String,
+      enum: ["monthly", "yearly"],
+      default: "monthly",
+    },
 
     // Limits associated with this plan (e.g., max listings, AI credits)
     limits: {
@@ -26,7 +34,7 @@ const planSchema = new Schema(
 
     // Features associated with this plan (like premium support, additional tools)
     features: { type: [String], default: [] },
-
+    isPopular: { type: Boolean, default: false },
     // Indicates if the plan is currently active or disabled
     status: { type: String, enum: ["active", "inactive"], default: "active" },
   },
