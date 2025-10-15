@@ -53,28 +53,6 @@ export const registerUser = async (req, res, next) => {
       next
     );
 
-    // // Send OTP to user's email using Nodemailer
-    // const transporter = nodemailer.createTransport({
-    //     service: "gmail",  // Or use another email service
-    //     auth: {
-    //         user: process.env.EMAIL_USER,  // Your email (must be set in .env)
-    //         pass: process.env.EMAIL_PASSWORD,  // Your email password (must be set in .env)
-    //     },
-    // });
-
-    // const mailOptions = {
-    //     from: process.env.EMAIL_USER,
-    //     to: email,
-    //     subject: "🎉 Welcome to Drivest!",
-    //     text: `Your OTP for password reset is:. It is valid for 10 minutes.`,
-    // };
-
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //     if (error) {
-    //         return next(new DevBuildError("Failed to send OTP", 500));
-    //     }
-    //     res.status(200).json({ message: "OTP sent successfully!" });
-    // });
 
     res.status(201).json({
       message: "User registered successfully with 7-day free trial",
@@ -279,3 +257,29 @@ export const loginWithFirebase = async (req, res, next) => {
     next(e);
   }
 };
+
+
+
+
+// // Send OTP to user's email using Nodemailer
+    // const transporter = nodemailer.createTransport({
+    //     service: "gmail",  // Or use another email service
+    //     auth: {
+    //         user: process.env.EMAIL_USER,  // Your email (must be set in .env)
+    //         pass: process.env.EMAIL_PASSWORD,  // Your email password (must be set in .env)
+    //     },
+    // });
+
+    // const mailOptions = {
+    //     from: process.env.EMAIL_USER,
+    //     to: email,
+    //     subject: "🎉 Welcome to Drivest!",
+    //     text: `Your OTP for password reset is:. It is valid for 10 minutes.`,
+    // };
+
+    // transporter.sendMail(mailOptions, (error, info) => {
+    //     if (error) {
+    //         return next(new DevBuildError("Failed to send OTP", 500));
+    //     }
+    //     res.status(200).json({ message: "OTP sent successfully!" });
+    // });
