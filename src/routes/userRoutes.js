@@ -1,6 +1,4 @@
 import express from "express";
-import { editUser } from "../controllers/userController.js";
-import { resetPassword } from "../controllers/authController.js";
 import { createTicket } from "../controllers/ticketController.js";
 import { getBrands } from "../controllers/brandController.js";
 import {
@@ -11,6 +9,7 @@ import {
   removeFavorite,
   toggleFavorite,
 } from "../controllers/favoriteController.js";
+import { editProfile, resetUserPassword } from "../controllers/userProfileController.js";
 // import {
 //   createSubscriptionSession,
 //   handleStripeWebhook,
@@ -25,8 +24,8 @@ userRoutes.get("/profile", (req, res) => {
 });
 
 // user manage related Routes
-userRoutes.put("/edit-user/:userId", editUser);
-userRoutes.put("/reset-password", resetPassword);
+userRoutes.put("/edit-profile", editProfile);
+userRoutes.put("/reset-password", resetUserPassword);
 
 // help & feedback related routes
 userRoutes.post("/create-ticket", createTicket);
