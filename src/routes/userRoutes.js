@@ -25,7 +25,7 @@ userRoutes.get("/profile", (req, res) => {
 
 // user manage related Routes
 userRoutes.put("/edit-profile", editProfile);
-userRoutes.put("/reset-password", resetUserPassword);
+userRoutes.put("/change-password", resetUserPassword);
 
 // help & feedback related routes
 userRoutes.post("/create-ticket", createTicket);
