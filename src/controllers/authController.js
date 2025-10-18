@@ -15,6 +15,12 @@ import pusher from "../config/pusher.js";
 
 // ✅ User Registration
 export const registerUser = async (req, res, next) => {
+  // ✅ Debugging: check environment variables
+  console.log("PUSHER_APP_ID:", process.env.PUSHER_APP_ID);
+  console.log("PUSHER_KEY:", process.env.PUSHER_KEY);
+  console.log("PUSHER_SECRET:", process.env.PUSHER_SECRET);
+  console.log("PUSHER_CLUSTER:", process.env.PUSHER_CLUSTER);
+  console.log("PUSHER_USE_TLS:", process.env.PUSHER_USE_TLS);
   try {
     const { name, email, password, phone, image } = req.body;
     const existingUser = await User.findOne({ email });
@@ -46,10 +52,10 @@ export const registerUser = async (req, res, next) => {
     await user.save();
 
     // --- find all active admins ---
-    const admins = await User.find({ role: "admin", status: 'active' }).select(
-      "_id name email"
-    );
-    console.log("admins", admins);
+    // const admins = await User.find({ role: "admin", status: 'active' }).select(
+    //   "_id name email"
+    // );
+    // console.log("admins", admins);
 
     // --- create notification for each admin & trigger pusher per admin private channel ---
     const notifPromises = admins.map(async (admin) => {
