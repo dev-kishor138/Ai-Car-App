@@ -30,7 +30,7 @@ const userSchema = new Schema(
       trim: true,
       match: [/^\+?[0-9]{7,15}$/, "Please enter a valid phone number"],
     },
-    aaddress: { type: String },
+    address: { type: String },
     dob: { type: Date },
     image: { type: String, default: null },
     otp: { type: String },
