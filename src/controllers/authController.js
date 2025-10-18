@@ -10,6 +10,8 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import Notification from "../models/Notification.js";
+import pusher from "../config/pusher.js";
 
 // ✅ User Registration
 export const registerUser = async (req, res, next) => {
@@ -43,6 +45,39 @@ export const registerUser = async (req, res, next) => {
     // 👉 Step 3: Save user
     await user.save();
 
+    // --- find all active admins ---
+    const admins = await User.find({ role: "admin", status: 'active' }).select(
+      "_id name email"
+    );
+    console.log("admins", admins);
+
+    // --- create notification for each admin & trigger pusher per admin private channel ---
+    const notifPromises = admins.map(async (admin) => {
+      // create per-admin notification (so admin can mark read/dismiss)
+      const notif = await Notification.create({
+        userId: admin._id, // receiver admin id
+        type: "info",
+        message: `New user registered: ${user.name} (${user.email})`,
+        priority: "normal",
+        status: "unread",
+      });
+
+      // trigger private channel for that admin
+      // channel name convention: private-admin-{adminId}
+      const channelName = `private-admin-${admin._id.toString()}`;
+      await pusher.trigger(channelName, "new-user", {
+        notificationId: notif._id,
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        createdAt: notif.createdAt,
+      });
+
+      return notif;
+    });
+
+    await Promise.all(notifPromises);
+
     // 👉 Step 4: Send Welcome Email
     await sendEmail(
       {
@@ -52,7 +87,6 @@ export const registerUser = async (req, res, next) => {
       },
       next
     );
-
 
     res.status(201).json({
       message: "User registered successfully with 7-day free trial",
@@ -258,28 +292,25 @@ export const loginWithFirebase = async (req, res, next) => {
   }
 };
 
-
-
-
 // // Send OTP to user's email using Nodemailer
-    // const transporter = nodemailer.createTransport({
-    //     service: "gmail",  // Or use another email service
-    //     auth: {
-    //         user: process.env.EMAIL_USER,  // Your email (must be set in .env)
-    //         pass: process.env.EMAIL_PASSWORD,  // Your email password (must be set in .env)
-    //     },
-    // });
+// const transporter = nodemailer.createTransport({
+//     service: "gmail",  // Or use another email service
+//     auth: {
+//         user: process.env.EMAIL_USER,  // Your email (must be set in .env)
+//         pass: process.env.EMAIL_PASSWORD,  // Your email password (must be set in .env)
+//     },
+// });
 
-    // const mailOptions = {
-    //     from: process.env.EMAIL_USER,
-    //     to: email,
-    //     subject: "🎉 Welcome to Drivest!",
-    //     text: `Your OTP for password reset is:. It is valid for 10 minutes.`,
-    // };
+// const mailOptions = {
+//     from: process.env.EMAIL_USER,
+//     to: email,
+//     subject: "🎉 Welcome to Drivest!",
+//     text: `Your OTP for password reset is:. It is valid for 10 minutes.`,
+// };
 
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //     if (error) {
-    //         return next(new DevBuildError("Failed to send OTP", 500));
-    //     }
-    //     res.status(200).json({ message: "OTP sent successfully!" });
-    // });
+// transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//         return next(new DevBuildError("Failed to send OTP", 500));
+//     }
+//     res.status(200).json({ message: "OTP sent successfully!" });
+// });

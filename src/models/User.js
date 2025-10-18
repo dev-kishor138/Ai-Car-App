@@ -44,7 +44,7 @@ const userSchema = new Schema(
 
     trialStart: { type: Date },
     trialEnd: { type: Date },
-    isTrialUsed: { type: Boolean, default: false }, 
+    isTrialUsed: { type: Boolean, default: false },
 
     hasActiveSubscription: { type: Boolean, default: false },
     subscriptionId: { type: Schema.Types.ObjectId, ref: "Subscription" },
@@ -76,10 +76,16 @@ userSchema.index(
   { unique: true, partialFilterExpression: { deletedAt: null } }
 );
 
-// userSchema.index(
-//     { phone: 1 },
-//     { unique: true, partialFilterExpression: { deletedAt: null } }
-// );
+userSchema.index(
+  { phone: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      phone: { $type: "string" },
+      deletedAt: null,
+    },
+  }
+);
 
 userSchema.index({ role: 1, status: 1 });
 userSchema.index({ dealershipId: 1, role: 1 });
