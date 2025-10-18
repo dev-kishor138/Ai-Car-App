@@ -5,27 +5,24 @@
 import mongoose from "mongoose";
 import Car from "../models/Car.js";
 
-
-// getallCar from bd json 
+// getallCar from bd json
 export const getAllCar = async (req, res, next) => {
-    try {
-        const cars = await Car.find({});
+  try {
+    const cars = await Car.find({});
 
-        if (!cars) {
-            throw new Error("No cars found");
-        }
-
-        res.status(200).json({
-            success: true,
-            total: cars.length,
-            data: cars,
-        });
-
-    } catch (error) {
-        next(error);
+    if (!cars) {
+      throw new Error("No cars found");
     }
-};
 
+    res.status(200).json({
+      success: true,
+      total: cars.length,
+      data: cars,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const searchCars = async (req, res, next) => {
   try {
@@ -44,12 +41,12 @@ export const searchCars = async (req, res, next) => {
       sort = "-publishedAt",
     } = req.query;
 
-    const pageNum  = Math.max(1, parseInt(page) || 1);
-    const perPage  = Math.min(100, Math.max(1, parseInt(limit) || 10));
-    const skip     = (pageNum - 1) * perPage;
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const perPage = Math.min(100, Math.max(1, parseInt(limit) || 10));
+    const skip = (pageNum - 1) * perPage;
 
     // ---------- Filter build ----------
-    const filter = { };
+    const filter = {};
     // soft-delete থাকলে: filter.isDeleted = { $ne: true };
 
     if (status) filter.status = status;
@@ -78,7 +75,6 @@ export const searchCars = async (req, res, next) => {
       useText = true; // ধরলাম text index আছে; নিচে fallback-ও দিলাম
     }
 
-
     // ---------- Projection & Sort ----------
     let projection = {
       // client-এ যা লাগবে সেগুলো রাখুন
@@ -99,6 +95,8 @@ export const searchCars = async (req, res, next) => {
       publishedAt: 1,
       createdAt: 1,
       updatedAt: 1,
+      "location.city": 1,
+      "location.country": 1,
     };
 
     let sortSpec = {};
@@ -152,9 +150,10 @@ export const searchCars = async (req, res, next) => {
         .limit(perPage)
         .collation({ locale: "en", strength: 2 }) // case-insensitive sort
         .lean(),
-      Car.countDocuments(q && q.trim()
-        ? query.getFilter() // count with same filter
-        : filter
+      Car.countDocuments(
+        q && q.trim()
+          ? query.getFilter() // count with same filter
+          : filter
       ),
     ]);
 
@@ -174,9 +173,6 @@ export const searchCars = async (req, res, next) => {
     next(error);
   }
 };
-
-
-
 
 const asMongoIdOrString = (id) => {
   if (!id) return null;
@@ -242,13 +238,18 @@ export const compareCars = async (req, res, next) => {
     }
 
     if (String(carA) === String(carB)) {
-      return res.status(400).json({ message: "carA and carB must be different" });
+      return res
+        .status(400)
+        .json({ message: "carA and carB must be different" });
     }
 
     const idA = asMongoIdOrString(carA);
     const idB = asMongoIdOrString(carB);
 
-    const cars = await Car.find({ _id: { $in: [idA, idB] } }, pickProjection).lean();
+    const cars = await Car.find(
+      { _id: { $in: [idA, idB] } },
+      pickProjection
+    ).lean();
 
     const docA = cars.find((c) => String(c._id) === String(idA));
     const docB = cars.find((c) => String(c._id) === String(idB));
@@ -267,11 +268,28 @@ export const compareCars = async (req, res, next) => {
       typeof x === "number" && typeof y === "number" ? y - x : null;
 
     const diff = {
-      price: { a: a.price, b: b.price, delta: numDelta(a.price, b.price), currency: a.currency || b.currency || null },
+      price: {
+        a: a.price,
+        b: b.price,
+        delta: numDelta(a.price, b.price),
+        currency: a.currency || b.currency || null,
+      },
       year: { a: a.year, b: b.year, delta: numDelta(a.year, b.year) },
-      mileage: { a: a.mileage, b: b.mileage, delta: numDelta(a.mileage, b.mileage) },
-      horsepower: { a: a.specs?.horsepower ?? null, b: b.specs?.horsepower ?? null, delta: numDelta(a.specs?.horsepower, b.specs?.horsepower) },
-      torque: { a: a.specs?.torque ?? null, b: b.specs?.torque ?? null, delta: numDelta(a.specs?.torque, b.specs?.torque) },
+      mileage: {
+        a: a.mileage,
+        b: b.mileage,
+        delta: numDelta(a.mileage, b.mileage),
+      },
+      horsepower: {
+        a: a.specs?.horsepower ?? null,
+        b: b.specs?.horsepower ?? null,
+        delta: numDelta(a.specs?.horsepower, b.specs?.horsepower),
+      },
+      torque: {
+        a: a.specs?.torque ?? null,
+        b: b.specs?.torque ?? null,
+        delta: numDelta(a.specs?.torque, b.specs?.torque),
+      },
     };
 
     res.status(200).json({
@@ -283,8 +301,6 @@ export const compareCars = async (req, res, next) => {
     next(err);
   }
 };
-
-
 
 // export const carList = async (req, res, next) => {
 //     try {
@@ -338,7 +354,6 @@ export const compareCars = async (req, res, next) => {
 //         res.status(e?.response?.status || 500).json({ ok: false, error: e?.response?.data || e.message });
 //     }
 // };
-
 
 // export const probeRapid = async (req, res) => {
 //     const url = process.env.AUTOSCOUT_DEFAULT_URL;
