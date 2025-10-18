@@ -11,7 +11,8 @@ export const toggleFavorite = async (req, res, next) => {
     const { carId } = req.body;
 
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
-    if (!carId || !isValidId(carId)) return res.status(400).json({ message: "Invalid carId" });
+    if (!carId || !isValidId(carId))
+      return res.status(400).json({ message: "Invalid carId" });
 
     const car = await Car.findById(carId).select("_id");
     if (!car) return res.status(404).json({ message: "Car not found" });
@@ -19,10 +20,14 @@ export const toggleFavorite = async (req, res, next) => {
     const found = await Favorite.findOne({ userId, carId });
     if (found) {
       await Favorite.deleteOne({ _id: found._id });
-      return res.status(200).json({ message: "Removed from favorites", favored: false });
+      return res
+        .status(200)
+        .json({ message: "Removed from favorites", favored: false });
     } else {
       await Favorite.create({ userId, carId });
-      return res.status(201).json({ message: "Added to favorites", favored: true });
+      return res
+        .status(201)
+        .json({ message: "Added to favorites", favored: true });
     }
   } catch (err) {
     next(err);
@@ -36,13 +41,20 @@ export const addFavorite = async (req, res, next) => {
     const { carId } = req.body;
 
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
-    if (!carId || !isValidId(carId)) return res.status(400).json({ message: "Invalid carId" });
+    if (!carId || !isValidId(carId))
+      return res.status(400).json({ message: "Invalid carId" });
 
     const car = await Car.findById(carId).select("_id");
     if (!car) return res.status(404).json({ message: "Car not found" });
 
-    await Favorite.updateOne({ userId, carId }, { $setOnInsert: { userId, carId } }, { upsert: true });
-    return res.status(201).json({ message: "Added to favorites", favored: true });
+    await Favorite.updateOne(
+      { userId, carId },
+      { $setOnInsert: { userId, carId } },
+      { upsert: true }
+    );
+    return res
+      .status(201)
+      .json({ message: "Added to favorites", favored: true });
   } catch (err) {
     next(err);
   }
@@ -55,10 +67,13 @@ export const removeFavorite = async (req, res, next) => {
     const { carId } = req.params;
 
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
-    if (!carId || !isValidId(carId)) return res.status(400).json({ message: "Invalid carId" });
+    if (!carId || !isValidId(carId))
+      return res.status(400).json({ message: "Invalid carId" });
 
     await Favorite.deleteOne({ userId, carId });
-    return res.status(200).json({ message: "Removed from favorites", favored: false });
+    return res
+      .status(200)
+      .json({ message: "Removed from favorites", favored: false });
   } catch (err) {
     next(err);
   }
@@ -70,16 +85,19 @@ export const getMyFavorites = async (req, res, next) => {
     const userId = req.user?._id;
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
-    const page  = Math.max(1, parseInt(req.query.page) || 1);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.max(1, parseInt(req.query.limit) || 10);
-    const skip  = (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
     const [items, total] = await Promise.all([
       Favorite.find({ userId })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate({ path: "carId", select: "_id title brand model price year images status" })
+        .populate({
+          path: "carId",
+          select: "_id title brand model price year images status make mileage bodyType fuelType color",
+        })
         .lean(),
       Favorite.countDocuments({ userId }),
     ]);
@@ -93,7 +111,7 @@ export const getMyFavorites = async (req, res, next) => {
 
     res.status(200).json({
       message: "Favorites retrieved",
-      data,
+      items,
       meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (err) {
@@ -108,7 +126,8 @@ export const isFavorited = async (req, res, next) => {
     const { carId } = req.params;
 
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
-    if (!carId || !isValidId(carId)) return res.status(400).json({ message: "Invalid carId" });
+    if (!carId || !isValidId(carId))
+      return res.status(400).json({ message: "Invalid carId" });
 
     const exists = await Favorite.exists({ userId, carId });
     res.status(200).json({ favored: Boolean(exists) });
@@ -121,7 +140,8 @@ export const isFavorited = async (req, res, next) => {
 export const getCarFavoriteCount = async (req, res, next) => {
   try {
     const { carId } = req.params;
-    if (!carId || !isValidId(carId)) return res.status(400).json({ message: "Invalid carId" });
+    if (!carId || !isValidId(carId))
+      return res.status(400).json({ message: "Invalid carId" });
 
     const count = await Favorite.countDocuments({ carId });
     res.status(200).json({ carId, count });
