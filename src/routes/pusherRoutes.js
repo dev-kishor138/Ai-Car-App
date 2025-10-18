@@ -2,6 +2,7 @@ import express from "express";
 import pusher from "../config/pusher.js";
 import { isAuthenticated } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";
+import Notification from "../models/Notification.js";
 
 const pusherRoutes = express.Router();
 
