@@ -65,11 +65,10 @@ export const registerUser = async (req, res, next) => {
       // trigger private channel for that admin
       // channel name convention: private-admin-{adminId}
       const channelName = `private-admin-${admin._id.toString()}`;
-      await pusher.trigger(channelName, "new-user", {
+      await pusher.trigger(channelName, "new-notification", {
         notificationId: notif._id,
-        userId: user._id,
-        name: user.name,
-        email: user.email,
+        title: "New User Registered",
+        message: `New user registered: ${user.name} (${user.email})`,
         createdAt: notif.createdAt,
       });
 

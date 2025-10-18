@@ -15,4 +15,17 @@ pusherRoutes.post("/pusher/auth", isAuthenticated, isAdmin, (req, res) => {
   }
 });
 
+pusherRoutes.get("/notifications", isAuthenticated, isAdmin, async (req, res, next) => {
+  try {
+    const notifs = await Notification.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.json({ success: true, data: notifs });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 export default pusherRoutes;
