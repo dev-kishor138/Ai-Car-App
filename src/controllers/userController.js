@@ -105,7 +105,7 @@ export const confirmDeleteUser = async (req, res, next) => {
     }
 
     // Hard delete the user by removing from the database
-    await user.remove();
+    await user.deleteOne();
 
     res.status(200).json({ message: "User confirm deleted successfully" });
   } catch (error) {
