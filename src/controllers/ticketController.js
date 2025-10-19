@@ -52,7 +52,7 @@ export const createTicket = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: "Ticket created successfully and admins notified",
+      message: "Ticket created successfully",
     });
   } catch (error) {
     console.error("Error creating Ticket:", error);
