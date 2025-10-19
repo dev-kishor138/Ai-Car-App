@@ -9,7 +9,15 @@ import {
   removeFavorite,
   toggleFavorite,
 } from "../controllers/favoriteController.js";
-import { editProfile, resetUserPassword } from "../controllers/userProfileController.js";
+import {
+  editProfile,
+  resetUserPassword,
+} from "../controllers/userProfileController.js";
+import {
+  compareCars,
+  getCarDetails,
+  searchCars,
+} from "../controllers/carController.js";
 // import {
 //   createSubscriptionSession,
 //   handleStripeWebhook,
@@ -46,6 +54,11 @@ userRoutes.get("/favorites", getMyFavorites);
 userRoutes.get("/favorites/:carId/is-favorited", isFavorited);
 // Count how many users favored this car
 userRoutes.get("/cars/:carId/favorites/count", getCarFavoriteCount);
+
+// car related routes
+userRoutes.get("/cars", searchCars);
+userRoutes.get("/cars-details/:id", getCarDetails);
+userRoutes.get("/cars/compare", compareCars);
 
 // // Create subscription session
 // userRoutes.post("/subscription/create", createSubscriptionSession);

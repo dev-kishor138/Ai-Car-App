@@ -77,7 +77,6 @@ export const searchCars = async (req, res, next) => {
 
     // ---------- Projection & Sort ----------
     let projection = {
-      // client-এ যা লাগবে সেগুলো রাখুন
       title: 1,
       make: 1,
       model: 1,
@@ -302,105 +301,65 @@ export const compareCars = async (req, res, next) => {
   }
 };
 
-// export const carList = async (req, res, next) => {
-//     try {
-//         const { make, model, zip, page, limit, mode, raw } = req.query;
+export const getCarDetails = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-//         if (mode === "page") {
-//             const items = await autoscoutFromPage();
-//             return res.json({
-//                 ok: true,
-//                 mode: "page",
-//                 count: items.length,
-//                 items: raw === "1" ? items.slice(0, 20) : items.slice(0, 40),
-//             });
-//         }
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Car ID is required" });
+    }
 
-//         if (make || model) {
-//             try {
-//                 const items = await autoscoutSearch({ make, model, zip, page, limit });
-//                 if (items.length > 0) {
-//                     return res.json({ ok: true, mode: "search", count: items.length, items });
-//                 }
-//             } catch (e) {
-//                 console.warn("search failed → fallback to page parse:", e?.response?.status || e.message);
-//             }
-//         }
+    // Check if valid MongoID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Car ID" });
+    }
 
-//         const items = await autoscoutFromPage();
-//         return res.json({ ok: true, mode: "default-page", count: items.length, items: items.slice(0, 40) });
+    // car খোঁজা
+    const car = await Car.findById(id)
+      .select({
+        title: 1,
+        make: 1,
+        model: 1,
+        trim: 1,
+        year: 1,
+        price: 1,
+        currency: 1,
+        mileage: 1,
+        condition: 1,
+        fuelType: 1,
+        transmission: 1,
+        bodyType: 1,
+        driveType: 1,
+        color: 1,
+        features: 1,
+        specs: 1,
+        description: 1,
+        location: 1,
+        status: 1,
+        "media.images": 1,
+        "media.cover.url": 1,
+        publishedAt: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        "location.city": 1,
+        "location.country": 1,
+      })
+      .lean();
 
-//     } catch (error) {
-//         next(error);
-//     }
-// };
+    if (!car) {
+      return res.status(404).json({ success: false, message: "Car not found" });
+    }
 
-// export const debugPage = async (req, res) => {
-//     try {
-//         const url = process.env.AUTOSCOUT_DEFAULT_URL;
-//         const path = process.env.RAPIDAPI_PAGESOURCE_PATH;
-//         const method = (process.env.RAPIDAPI_PAGESOURCE_METHOD || "GET").toUpperCase();
-
-//         let r;
-//         if (method === "POST") {
-//             r = await rapid.post(path, null, { params: { url } });
-//         } else {
-//             r = await rapid.get(path, { params: { url } });
-//         }
-
-//         const html = r.data?.toString ? r.data.toString() : String(r.data || "");
-//         res.json({ ok: true, status: r.status, length: html.length, preview: html.slice(0, 600) });
-//     } catch (e) {
-//         res.status(e?.response?.status || 500).json({ ok: false, error: e?.response?.data || e.message });
-//     }
-// };
-
-// export const probeRapid = async (req, res) => {
-//     const url = process.env.AUTOSCOUT_DEFAULT_URL;
-
-//     // সম্ভাব্য path গুলো (সবচেয়ে কমন)
-//     const paths = [
-//         "/page-source", "/get_page_source", "/getPageSource",
-//         "/page", "/html", "/fetch", "/scrape", "/scrape-page",
-//         "/get-html", "/getPage", "/scraper"
-//     ];
-
-//     const tries = [];
-
-//     for (const p of paths) {
-//         // 1) GET with params
-//         try {
-//             const r = await rapid.get(p, { params: { url } });
-//             if (r.status === 200) {
-//                 const text = r.data?.toString ? r.data.toString() : String(r.data || "");
-//                 return res.json({ ok: true, found: { method: "GET", path: p, mode: "params" }, length: text.length, preview: text.slice(0, 400) });
-//             }
-//         } catch (e) {
-//             tries.push({ method: "GET", path: p, mode: "params", status: e?.response?.status, msg: e?.response?.data?.message || e.message });
-//         }
-
-//         // 2) POST with params (querystring style)
-//         try {
-//             const r = await rapid.post(p, null, { params: { url } });
-//             if (r.status === 200) {
-//                 const text = r.data?.toString ? r.data.toString() : String(r.data || "");
-//                 return res.json({ ok: true, found: { method: "POST", path: p, mode: "params" }, length: text.length, preview: text.slice(0, 400) });
-//             }
-//         } catch (e) {
-//             tries.push({ method: "POST", path: p, mode: "params", status: e?.response?.status, msg: e?.response?.data?.message || e.message });
-//         }
-
-//         // 3) POST with JSON body
-//         try {
-//             const r = await rapid.post(p, { url });
-//             if (r.status === 200) {
-//                 const text = r.data?.toString ? r.data.toString() : String(r.data || "");
-//                 return res.json({ ok: true, found: { method: "POST", path: p, mode: "json-body" }, length: text.length, preview: text.slice(0, 400) });
-//             }
-//         } catch (e) {
-//             tries.push({ method: "POST", path: p, mode: "json-body", status: e?.response?.status, msg: e?.response?.data?.message || e.message });
-//         }
-//     }
-
-//     return res.status(404).json({ ok: false, reason: "No working endpoint found on this host with common patterns.", tried: tries });
-// };
+    res.status(200).json({
+      success: true,
+      message: "Car details fetched successfully",
+      data: car,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

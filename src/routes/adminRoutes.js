@@ -2,7 +2,7 @@ import express from "express";
 import { approvedUser, createUser, deleteUser, editUser, getAllUser, rejectUser } from "../controllers/userController.js";
 import { resetPassword } from "../controllers/authController.js";
 import { getAllTicket } from "../controllers/ticketController.js";
-import { getAllCar } from "../controllers/carController.js";
+import { getAllCar, searchCars } from "../controllers/carController.js";
 
 
 
@@ -27,7 +27,7 @@ adminRoutes.put('/reject-user/:userId', rejectUser);
 adminRoutes.get('/tickets', getAllTicket);
 
 // car related routes 
-adminRoutes.get('/cars', getAllCar);
+adminRoutes.get('/cars', searchCars);
 
 
 

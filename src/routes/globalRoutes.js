@@ -1,15 +1,26 @@
 import express from "express";
-import { loginUser, loginWithFirebase, refreshToken, registerUser, resetPassword, sendOTP, verifyOTP } from "../controllers/authController.js";
+import {
+  loginUser,
+  loginWithFirebase,
+  refreshToken,
+  registerUser,
+  resetPassword,
+  sendOTP,
+  verifyOTP,
+} from "../controllers/authController.js";
 import { googleLogin } from "../controllers/googleLogin.js";
-import { compareCars, searchCars } from "../controllers/carController.js";
+import {
+  compareCars,
+  getCarDetails,
+  searchCars,
+} from "../controllers/carController.js";
 
 const globalRoutes = express.Router();
 
-// Global Routes 
+// Global Routes
 globalRoutes.post("/register", registerUser);
 globalRoutes.post("/login", loginUser);
 globalRoutes.post("/refresh-token", refreshToken);
-
 
 // globalRoutes.post("/firebase-login", verifyFirebaseIdToken, loginWithFirebase);
 
@@ -22,16 +33,14 @@ globalRoutes.post("/verify-otp", verifyOTP);
 // Route for resetting password
 globalRoutes.post("/reset-password", resetPassword);
 
-// google login route 
-globalRoutes.post('/google-login', googleLogin);
+// google login route
+globalRoutes.post("/google-login", googleLogin);
 
 // all car list
 // globalRoutes.get('/cars', getAllCar);
-globalRoutes.get("/cars", searchCars);
-globalRoutes.get("/cars/compare", compareCars);
+
 // globalRoutes.get('/car-list-scrap', carList);
 // globalRoutes.get("/_debug/page", debugPage);
 // globalRoutes.get("/_debug/probe-rapid", probeRapid);
-
 
 export default globalRoutes;
