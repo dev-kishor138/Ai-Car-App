@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import Stripe from "stripe";
 import Plan from "../models/Plan.js";
 import User from "../models/User.js";
@@ -6,27 +7,25 @@ import Invoice from "../models/Invoice.js";
 import { sendEmail } from "../lib/mailer.js";
 import { subscriptionSuccessTemplate } from "../lib/emailTemplates.js";
 
+dotenv.config();
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // ✅ Step 1: Create Checkout Session
 export const createSubscriptionSession = async (req, res, next) => {
   try {
     const user = req.user;
-
+    console.log("user", user);
     // Check trial
     if (user.trialEnd && user.trialEnd > new Date()) {
       return res.status(400).json({ message: "Trial is still active." });
     }
 
-    const { planId } = req.body;
-    const plan = await Plan.findById(planId);
-    if (!plan) throw new Error("Plan not found");
-
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       customer_email: user.email,
-      line_items: [{ price: plan.stripePriceId, quantity: 1 }],
+      line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
       success_url: `${process.env.FRONTEND_URL}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.FRONTEND_URL}/subscription-cancel`,
     });
@@ -62,11 +61,11 @@ export const handleStripeWebhook = async (req, res) => {
       // 2️⃣ Create subscription document
       const subscription = await Subscription.create({
         subscriberId: user._id,
-        planId: session.display_items?.[0]?.plan?.id || null, // optional fallback
+        planName: "Pro Plan", // manually fixed name
         stripeSubscriptionId: session.subscription,
         stripeCustomerId: session.customer,
         startDate: new Date(),
-        endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)), // assuming monthly
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
         status: "active",
         limits: {
           maxListings: 50,
