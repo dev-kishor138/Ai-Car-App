@@ -338,7 +338,7 @@ export const getCarDetails = async (req, res, next) => {
         features: 1,
         specs: 1,
         description: 1,
-        location: 1,
+        // location: 1,
         status: 1,
         "media.images": 1,
         "media.cover.url": 1,
