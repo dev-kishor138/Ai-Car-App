@@ -18,7 +18,11 @@ import {
   getCarDetails,
   searchCars,
 } from "../controllers/carController.js";
-import { createSubscriptionSession, handleStripeWebhook } from "../controllers/subscriptionController.js";
+import {
+  createSubscriptionSession,
+  handleStripeWebhook,
+} from "../controllers/subscriptionController.js";
+import parser from "../storage/imageParser.js";
 // import {
 //   createSubscriptionSession,
 //   handleStripeWebhook,
@@ -33,7 +37,7 @@ userRoutes.get("/profile", (req, res) => {
 });
 
 // user manage related Routes
-userRoutes.put("/edit-profile", editProfile);
+userRoutes.put("/edit-profile", parser.single("image"), editProfile);
 userRoutes.put("/change-password", resetUserPassword);
 
 // help & feedback related routes

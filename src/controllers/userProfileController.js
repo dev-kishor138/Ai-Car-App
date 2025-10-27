@@ -1,8 +1,10 @@
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import DevBuildError from "../lib/DevBuildError.js";
 import { passwordResetTemplate } from "../lib/emailTemplates.js";
 import { sendEmail } from "../lib/mailer.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+
 
 // ✅ User profile Edit (Update)
 export const editProfile = async (req, res, next) => {
@@ -21,6 +23,10 @@ export const editProfile = async (req, res, next) => {
     userProfile.image = image || user.image;
     userProfile.dob = dob || user.dob;
     userProfile.address = address || user.address;
+
+     if (req.file && req.file.path) {
+      userProfile.image = req.file.path; // Cloudinary URL
+    }
 
     await userProfile.save();
 
