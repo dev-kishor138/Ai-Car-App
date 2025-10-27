@@ -5,11 +5,11 @@ import { sendEmail } from "../lib/mailer.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
-
 // ✅ User profile Edit (Update)
 export const editProfile = async (req, res, next) => {
   try {
     const user = req.user;
+    console.log("user", user);
     const { name, email, phone, image, dob, address } = req.body;
 
     const userProfile = await User.findById(user._id);
@@ -24,7 +24,7 @@ export const editProfile = async (req, res, next) => {
     userProfile.dob = dob || user.dob;
     userProfile.address = address || user.address;
 
-     if (req.file && req.file.path) {
+    if (req.file && req.file.path) {
       userProfile.image = req.file.path; // Cloudinary URL
     }
 
