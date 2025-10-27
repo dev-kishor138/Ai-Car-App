@@ -11,6 +11,7 @@ import globalRoutes from "./routes/globalRoutes.js";
 import { isAuthenticated } from "./middleware/authMiddleware.js";
 import { isAdmin, isDealer, isUser } from "./middleware/roleMiddleware.js";
 import pusherRoutes from "./routes/pusherRoutes.js";
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
 
 dotenv.config();
 
@@ -28,6 +29,8 @@ app.use("/user", isAuthenticated, isUser, userRoutes);
 app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
 // app.use("/dealer", isAuthenticated, isDealer, dealerRoutes);
 app.use("/api", pusherRoutes);
+
+app.use("/subscription", isAuthenticated, isUser, subscriptionRoutes);
 
 app.get("/", (_req, res) => res.send("Hello, World!"));
 

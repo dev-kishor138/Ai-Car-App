@@ -12,6 +12,7 @@ import { isAdmin, isDealer, isUser } from "./middleware/roleMiddleware.js";
 import { checkSubscription } from "./middleware/checkSubscription.js";
 import pusherRoutes from "./routes/pusherRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,8 @@ app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
 // app.use("/dealer", isAuthenticated, isDealer, dealerRoutes);
 app.use("/api", pusherRoutes);
 app.use("/subscription", isAuthenticated, isUser, subscriptionRoutes);
+
+app.use("/ai", aiRoutes);
 
 const PORT = process.env.PORT || 5000;
 
