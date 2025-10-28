@@ -127,13 +127,9 @@ export const loginUser = async (req, res, next) => {
     // admin always allowed
     if (user.role !== "admin") {
       const trialValid = user.trialEnd && now <= user.trialEnd;
-      const hasActiveSub =
-        user.hasActiveSubscription &&
-        user.subscriptionId &&
-        user.subscriptionId.status === "active" &&
-        user.subscriptionId.endDate > now;
+      // const hasActiveSub = user.hasActiveSubscription;
 
-      if (!trialValid && !hasActiveSub) {
+      if (!trialValid) {
         return res.status(403).json({
           message: "Your free trial has expired. Please subscribe to continue.",
           trialExpired: true,
