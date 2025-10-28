@@ -115,7 +115,7 @@ export const loginUser = async (req, res, next) => {
       })
       .lean();
 
-    console.log("user:", user);
+    // console.log("user:", user);
     // console.log("Hashed Password (db):", user.password);
 
     if (!user) {
@@ -136,7 +136,7 @@ export const loginUser = async (req, res, next) => {
     if (user.role !== "admin") {
       const trialValid = user.trialEnd && now <= user.trialEnd;
       // const hasActiveSub = user.hasActiveSubscription;
-      console.log("test", user);
+      // console.log("test", user);
 
       if (!trialValid) {
         return res.status(403).json({
