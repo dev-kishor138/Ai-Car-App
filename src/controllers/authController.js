@@ -122,6 +122,25 @@ export const loginUser = async (req, res, next) => {
       throw new DevBuildError("Invalid credentials", 400);
     }
 
+    const now = new Date();
+
+    // admin always allowed
+    if (user.role !== "admin") {
+      const trialValid = user.trialEnd && now <= user.trialEnd;
+      const hasActiveSub =
+        user.hasActiveSubscription &&
+        user.subscriptionId &&
+        user.subscriptionId.status === "active" &&
+        user.subscriptionId.endDate > now;
+
+      if (!trialValid && !hasActiveSub) {
+        return res.status(403).json({
+          message: "Your free trial has expired. Please subscribe to continue.",
+          trialExpired: true,
+        });
+      }
+    }
+
     // Generate Tokens
     const { accessToken, refreshToken } = generateTokens(user);
 
@@ -290,26 +309,3 @@ export const loginWithFirebase = async (req, res, next) => {
     next(e);
   }
 };
-
-// // Send OTP to user's email using Nodemailer
-// const transporter = nodemailer.createTransport({
-//     service: "gmail",  // Or use another email service
-//     auth: {
-//         user: process.env.EMAIL_USER,  // Your email (must be set in .env)
-//         pass: process.env.EMAIL_PASSWORD,  // Your email password (must be set in .env)
-//     },
-// });
-
-// const mailOptions = {
-//     from: process.env.EMAIL_USER,
-//     to: email,
-//     subject: "🎉 Welcome to Drivest!",
-//     text: `Your OTP for password reset is:. It is valid for 10 minutes.`,
-// };
-
-// transporter.sendMail(mailOptions, (error, info) => {
-//     if (error) {
-//         return next(new DevBuildError("Failed to send OTP", 500));
-//     }
-//     res.status(200).json({ message: "OTP sent successfully!" });
-// });
