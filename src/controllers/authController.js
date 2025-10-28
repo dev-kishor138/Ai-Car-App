@@ -105,9 +105,17 @@ export const loginUser = async (req, res, next) => {
     // console.log("📌 Login Request:", email, password);
 
     // const user = await User.findOne({ email });
-    const user = await User.findOne({ email }).select("password");
+    const user = await User.findOne({ email })
+      .select(
+        "name email role trialEnd hasActiveSubscription subscriptionId +password"
+      )
+      .populate({
+        path: "subscriptionId",
+        select: "status endDate", // subscription থেকে দরকারি ফিল্ডগুলো
+      })
+      .lean();
 
-    // console.log("Password (input):", password);
+    console.log("user:", user);
     // console.log("Hashed Password (db):", user.password);
 
     if (!user) {
@@ -122,21 +130,21 @@ export const loginUser = async (req, res, next) => {
       throw new DevBuildError("Invalid credentials", 400);
     }
 
-    // const now = new Date();
+    const now = new Date();
 
-    // // admin always allowed
-    // if (user.role !== "admin") {
-    //   const trialValid = user.trialEnd && now <= user.trialEnd;
-    //   // const hasActiveSub = user.hasActiveSubscription;
-    //   console.log(trialValid);
+    // admin always allowed
+    if (user.role !== "admin") {
+      const trialValid = user.trialEnd && now <= user.trialEnd;
+      // const hasActiveSub = user.hasActiveSubscription;
+      console.log("test", user);
 
-    //   if (!trialValid) {
-    //     return res.status(403).json({
-    //       message: "Your free trial has expired. Please subscribe to continue.",
-    //       trialExpired: true,
-    //     });
-    //   }
-    // }
+      if (!trialValid) {
+        return res.status(403).json({
+          message: "Your free trial has expired. Please subscribe to continue.",
+          trialExpired: true,
+        });
+      }
+    }
 
     // Generate Tokens
     const { accessToken, refreshToken } = generateTokens(user);
