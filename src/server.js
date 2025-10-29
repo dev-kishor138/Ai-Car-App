@@ -31,7 +31,7 @@ app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
 // ✅ Dealer related routes
 // app.use("/dealer", isAuthenticated, isDealer, dealerRoutes);
 app.use("/api", pusherRoutes);
-app.use("/subscription", isAuthenticated, isUser, subscriptionRoutes);
+app.use("/subscription", isUser, subscriptionRoutes);
 
 app.use("/ai", aiRoutes);
 
