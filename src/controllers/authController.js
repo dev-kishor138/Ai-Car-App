@@ -130,6 +130,9 @@ export const loginUser = async (req, res, next) => {
       throw new DevBuildError("Invalid credentials", 400);
     }
 
+    // Generate Tokens
+    const { accessToken, refreshToken } = generateTokens(user);
+    
     const now = new Date();
 
     // admin always allowed
@@ -142,12 +145,11 @@ export const loginUser = async (req, res, next) => {
         return res.status(403).json({
           message: "Your free trial has expired. Please subscribe to continue.",
           trialExpired: true,
+          accessToken,
+          refreshToken,
         });
       }
     }
-
-    // Generate Tokens
-    const { accessToken, refreshToken } = generateTokens(user);
 
     res
       .status(200)
