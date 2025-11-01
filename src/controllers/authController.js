@@ -132,7 +132,7 @@ export const loginUser = async (req, res, next) => {
 
     // Generate Tokens
     const { accessToken, refreshToken } = generateTokens(user);
-    
+
     const now = new Date();
 
     // admin always allowed
@@ -206,11 +206,13 @@ export const sendOTP = async (req, res, next) => {
     await user.save();
 
     // 👉 Step 4: Send OTP Email
-    await sendEmail({
+    const mailSendResponse = await sendEmail({
       to: email,
       subject: "Password Reset OTP",
       html: otpEmailTemplate(user?.name, otp),
     });
+
+    console.log(mailSendResponse);
 
     // 👉 Step 5: Send response
     res.status(200).json({ message: "OTP sent successfully!" });

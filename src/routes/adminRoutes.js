@@ -11,6 +11,8 @@ import { resetPassword } from "../controllers/authController.js";
 import { getAllTicket } from "../controllers/ticketController.js";
 import { getAllCar, searchCars } from "../controllers/carController.js";
 import { deleteNotification } from "../controllers/notificationController.js";
+import parser from "../storage/imageParser.js";
+import { editProfile, resetUserPassword } from "../controllers/userProfileController.js";
 
 const adminRoutes = express.Router();
 
@@ -18,6 +20,10 @@ const adminRoutes = express.Router();
 adminRoutes.get("/profile", (req, res) => {
   res.json({ message: "Welcome Admin!", user: req.user });
 });
+
+// profile manage related Routes
+adminRoutes.put("/edit-profile", parser.single("image"), editProfile);
+adminRoutes.put("/change-password", resetUserPassword);
 
 // user manage related Routes
 adminRoutes.post("/create-user", createUser);
