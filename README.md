@@ -50,6 +50,9 @@ The backend provides REST APIs for the Drivest platform including:
 
 ## Folder Structure
 
+## Folder Structure
+
+```bash
 root
 │ package.json
 │ README.md
@@ -77,7 +80,7 @@ root
 │ ├── googleLogin.js
 │ ├── notificationController.js
 │ ├── subscriptionController.js
-│ └── userController.js
+│ ├── userController.js
 │ └── userProfileController.js
 │
 ├── lib
@@ -127,6 +130,7 @@ root
 │
 └── storage
 └── imageParser.js
+```
 
 ## Features
 
@@ -157,18 +161,20 @@ git clone https://github.com/your-username/drivest-backend.git
 cd drivest-backend
 ```
 
-### Environment Variables
+## Environment Variables
 
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-EMAIL_USER=your_email@example.com
-EMAIL_PASS=your_email_password
-STRIPE_SECRET_KEY=your_stripe_secret_key
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-PUSHER_APP_ID=your_pusher_app_id
-PUSHER_KEY=your_pusher_key
-PUSHER_SECRET=your_pusher_secret
-PUSHER_CLUSTER=your_pusher_cluster
+Create a `.env` file in the root folder with the following variables:
+
+- `PORT` – The port on which the server will run (e.g., `5000`)
+- `MONGO_URI` – MongoDB connection string
+- `JWT_SECRET` – Secret key for JWT authentication
+- `EMAIL_USER` – Email address for sending notifications
+- `EMAIL_PASS` – Email password or app password
+- `STRIPE_SECRET_KEY` – Stripe API secret key for payments
+- `CLOUDINARY_CLOUD_NAME` – Cloudinary cloud name
+- `CLOUDINARY_API_KEY` – Cloudinary API key
+- `CLOUDINARY_API_SECRET` – Cloudinary API secret
+- `PUSHER_APP_ID` – Pusher App ID
+- `PUSHER_KEY` – Pusher Key
+- `PUSHER_SECRET` – Pusher Secret
+- `PUSHER_CLUSTER` – Pusher Cluster
