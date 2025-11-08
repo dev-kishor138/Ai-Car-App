@@ -11,7 +11,7 @@ dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// ✅ Step 1: Create Checkout Session
+// Step 1: Create Checkout Session
 export const createSubscriptionSession = async (req, res, next) => {
   try {
     const user = req.user;
@@ -26,7 +26,7 @@ export const createSubscriptionSession = async (req, res, next) => {
       payment_method_types: ["card"],
       customer_email: user.email,
       line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
-      success_url: `${process.env.FRONTEND_URL}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.FRONTEND_URL}/subscription-success?session_id={CHECKOUT_SESSION_ID}/success`,
       cancel_url: `${process.env.FRONTEND_URL}/subscription-cancel`,
     });
 
@@ -36,7 +36,7 @@ export const createSubscriptionSession = async (req, res, next) => {
   }
 };
 
-// ✅ Step 2: Webhook to handle payment success
+// Step 2: Webhook to handle payment success
 export const handleStripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   let event;
@@ -55,10 +55,10 @@ export const handleStripeWebhook = async (req, res) => {
     case "checkout.session.completed":
       const session = event.data.object;
 
-      // 1️⃣ Find user
+      // Find user
       const user = await User.findOne({ email: session.customer_email });
 
-      // 2️⃣ Create subscription document
+      // Create subscription document
       const subscription = await Subscription.create({
         subscriberId: user._id,
         planName: "Pro Plan", // manually fixed name
@@ -74,7 +74,7 @@ export const handleStripeWebhook = async (req, res) => {
         },
       });
 
-      // 3️⃣ Create invoice document
+      // Create invoice document
       await Invoice.create({
         userId: user._id,
         subscriptionId: subscription._id,
@@ -92,12 +92,12 @@ export const handleStripeWebhook = async (req, res) => {
         periodEnd: subscription.endDate,
       });
 
-      // 4️⃣ Update user subscription
+      // Update user subscription
       user.subscriptionActive = true;
       user.subscriptionId = subscription._id;
       await user.save();
 
-      // 5️⃣ Send email to user
+      // Send email to user
       await sendEmail(
         user.email,
         "Subscription Successful!",
