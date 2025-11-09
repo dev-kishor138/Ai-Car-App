@@ -49,7 +49,7 @@ export const registerUser = async (req, res, next) => {
     const admins = await User.find({ role: "admin", status: "active" }).select(
       "_id name email"
     );
-    console.log("admins", admins);
+    // console.log("admins", admins);
 
     // --- create notification for each admin & trigger pusher per admin private channel ---
     const notifPromises = admins.map(async (admin) => {
@@ -212,7 +212,7 @@ export const sendOTP = async (req, res, next) => {
       html: otpEmailTemplate(user?.name, otp),
     });
 
-    console.log(mailSendResponse);
+    // console.log(mailSendResponse);
 
     // 👉 Step 5: Send response
     res.status(200).json({ message: "OTP sent successfully!" });

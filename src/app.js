@@ -12,6 +12,7 @@ import { isAuthenticated } from "./middleware/authMiddleware.js";
 import { isAdmin, isDealer, isUser } from "./middleware/roleMiddleware.js";
 import pusherRoutes from "./routes/pusherRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import { handleStripeWebhook } from "./controllers/subscriptionController.js";
 
 dotenv.config();
 
@@ -31,7 +32,11 @@ app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
 app.use("/api", pusherRoutes);
 
 app.use("/subscription", isAuthenticated, isUser, subscriptionRoutes);
-
+app.post(
+  "/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
 app.get("/", (_req, res) => res.send("Hello, World!"));
 
 // Error handler

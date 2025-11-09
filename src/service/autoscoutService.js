@@ -38,9 +38,9 @@ export async function autoscoutFromPage(url = DEFAULT_LIST_URL) {
   const html = r.data?.toString ? r.data.toString() : String(r.data || "");
 
   if (process.env.DEBUG_AUTOSCOUT === "true") {
-    console.log("[AUTOSCOUT:REQUEST]", { path: PAGESOURCE_PATH, url });
-    console.log("[AUTOSCOUT:STATUS]", r.status);
-    console.log("[AUTOSCOUT:LENGTH]", html.length);
+    // console.log("[AUTOSCOUT:REQUEST]", { path: PAGESOURCE_PATH, url });
+    // console.log("[AUTOSCOUT:STATUS]", r.status);
+    // console.log("[AUTOSCOUT:LENGTH]", html.length);
   }
 
   const $ = load(html);

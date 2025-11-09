@@ -10,10 +10,10 @@ const subscriptionRoutes = express.Router();
 subscriptionRoutes.post("/create", createSubscriptionSession);
 
 // Stripe webhook
-subscriptionRoutes.post(
-  "/stripe/webhook",
-  express.raw({ type: "application/json" }),
-  handleStripeWebhook
-);
+// subscriptionRoutes.post(
+//   "/stripe/webhook",
+//   express.raw({ type: "application/json" }),
+//   handleStripeWebhook
+// );
 
 export default subscriptionRoutes;

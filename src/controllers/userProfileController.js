@@ -9,7 +9,7 @@ import bcrypt from "bcrypt";
 export const editProfile = async (req, res, next) => {
   try {
     const user = req.user;
-    console.log("user", user);
+    // console.log("user", user);
     const { name, email, phone, image, dob, address } = req.body;
 
     const userProfile = await User.findById(user._id);
