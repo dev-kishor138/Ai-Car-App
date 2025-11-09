@@ -18,10 +18,30 @@ import { handleStripeWebhook } from "./controllers/subscriptionController.js";
 dotenv.config();
 const app = express();
 await connectDB();
-// Enable CORS for all routes
+
+
+
+// app.post(
+//   "/stripe/webhook",
+//   express.raw({ type: "application/json" }),
+//   handleStripeWebhook
+// );
+
+// // Enable CORS for all routes
+// app.use(cors());
+// // Middleware to parse JSON
+// app.use(express.json());
+
 app.use(cors());
-// Middleware to parse JSON
-app.use(express.json());
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    // only save raw body if content-type looks like JSON (optional)
+    // You can always save for everything, but skip for huge uploads if needed.
+    req.rawBody = buf;
+  }
+}));
+
+app.post("/stripe/webhook", handleStripeWebhook);
 
 // ✅ Global routes
 app.use("/", globalRoutes);
@@ -33,11 +53,7 @@ app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
 // app.use("/dealer", isAuthenticated, isDealer, dealerRoutes);
 app.use("/api", pusherRoutes);
 app.use("/subscription", isAuthenticated, isUser, subscriptionRoutes);
-app.post(
-  "/stripe/webhook",
-  express.raw({ type: "application/json" }),
-  handleStripeWebhook
-);
+
 app.use("/ai", aiRoutes);
 
 const PORT = process.env.PORT || 5000;

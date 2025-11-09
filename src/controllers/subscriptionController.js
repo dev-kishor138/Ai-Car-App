@@ -38,84 +38,103 @@ export const createSubscriptionSession = async (req, res, next) => {
 
 // ✅ Step 2: Webhook to handle payment success
 export const handleStripeWebhook = async (req, res) => {
-  console.log("This is from my /stripe/webhook ****");
+  // console.log("This is from my /stripe/webhook ****");
   const sig = req.headers["stripe-signature"];
+  // Debug logs (remove or comment out later)
+  // console.log('stripe-signature header present:', !!sig);
+  // console.log('typeof req.body:', typeof req.body);
+  // console.log('req.body is Buffer:', req.body instanceof Buffer);
+  // console.log('req.rawBody exists:', !!req.rawBody);
+  // console.log('req.rawBody is Buffer:', req.rawBody instanceof Buffer);
+  // if (req.rawBody) console.log('req.rawBody length:', req.rawBody.length);
+
+  if (!sig) {
+    console.error("Missing stripe-signature header");
+    return res.status(400).send("Missing stripe-signature header");
+  }
+
+  // Ensure we have raw buffer
+  const payload = req.rawBody;
+  if (!payload || !Buffer.isBuffer(payload)) {
+    console.error("No raw body buffer available for Stripe verification");
+    return res.status(400).send("No raw body available for webhook verification");
+  }
 
   let event;
-  console.log("env ", process.env.STRIPE_WEBHOOK_SECRET)
+  // console.log("env ", process.env.STRIPE_WEBHOOK_SECRET)
 
   try {
+    // IMPORTANT: pass the raw Buffer (or raw string) to constructEvent
     event = stripe.webhooks.constructEvent(
-      req.body,
+      payload, // <-- raw Buffer
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-
   } catch (err) {
-    console.log("Error From Subscription: ", err);
+    console.error("Error From Subscription: ", err);
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
+  // console.log("✅ stripe event verified:", event.type);
 
 
+  switch (event.type) {
+    case "checkout.session.completed":
+      const session = event.data.object;
 
-  // switch (event.type) {
-  //   case "checkout.session.completed":
-  //     const session = event.data.object;
+      // 1️⃣ Find user
+      const user = await User.findOne({ email: session.customer_email });
 
-  //     // 1️⃣ Find user
-  //     const user = await User.findOne({ email: session.customer_email });
+      // 2️⃣ Create subscription document
+      const subscription = await Subscription.create({
+        subscriberId: user._id,
+        planName: "Pro Plan", // manually fixed name
+        stripeSubscriptionId: session.subscription,
+        stripeCustomerId: session.customer,
+        startDate: new Date(),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        status: "active",
+        limits: {
+          maxListings: 50,
+          aiCredits: 1000,
+          teamMembers: 1,
+        },
+      });
 
-  //     // 2️⃣ Create subscription document
-  //     const subscription = await Subscription.create({
-  //       subscriberId: user._id,
-  //       planName: "Pro Plan", // manually fixed name
-  //       stripeSubscriptionId: session.subscription,
-  //       stripeCustomerId: session.customer,
-  //       startDate: new Date(),
-  //       endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-  //       status: "active",
-  //       limits: {
-  //         maxListings: 50,
-  //         aiCredits: 1000,
-  //         teamMembers: 1,
-  //       },
-  //     });
+      // 3️⃣ Create invoice document
+      await Invoice.create({
+        userId: user._id,
+        subscriptionId: subscription._id,
+        // planId: subscription.planId,
+        invoiceNumber: `INV-${Date.now()}`,
+        amount: session.amount_total / 100,
+        totalAmount: session.amount_total / 100,
+        currency: session.currency.toUpperCase(),
+        status: "paid",
+        paymentIntentId: session.payment_intent,
+        stripeInvoiceId: session.subscription,
+        paymentMethod: "card",
+        paidAt: new Date(),
+        periodStart: new Date(),
+        periodEnd: subscription.endDate,
+      });
 
-  //     // 3️⃣ Create invoice document
-  //     await Invoice.create({
-  //       userId: user._id,
-  //       subscriptionId: subscription._id,
-  //       planId: subscription.planId,
-  //       invoiceNumber: `INV-${Date.now()}`,
-  //       amount: session.amount_total / 100,
-  //       totalAmount: session.amount_total / 100,
-  //       currency: session.currency.toUpperCase(),
-  //       status: "paid",
-  //       paymentIntentId: session.payment_intent,
-  //       stripeInvoiceId: session.subscription,
-  //       paymentMethod: "card",
-  //       paidAt: new Date(),
-  //       periodStart: new Date(),
-  //       periodEnd: subscription.endDate,
-  //     });
+      // 4️⃣ Update user subscription
+      user.subscriptionActive = true;
+      user.subscriptionId = subscription._id;
+      await user.save();
 
-  //     // 4️⃣ Update user subscription
-  //     user.subscriptionActive = true;
-  //     user.subscriptionId = subscription._id;
-  //     await user.save();
+      // 5️⃣ Send email to user
+      await sendEmail(
+        user.email,
+        "Subscription Successful!",
+        subscriptionSuccessTemplate(user.name)
+      );
 
-  //     // 5️⃣ Send email to user
-  //     await sendEmail(
-  //       user.email,
-  //       "Subscription Successful!",
-  //       subscriptionSuccessTemplate(user.name)
-  //     );
+      break;
 
-  //     break;
-
-  //   default:
-  //     console.log(`Unhandled event type ${event.type}`);
-  // }
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
 
   res.json({ received: true });
 };

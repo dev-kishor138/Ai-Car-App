@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const subscriptionSchema = new Schema(
   {
     // Reference to the Plan this subscription is based on
-    planId: { type: Schema.Types.ObjectId, ref: "Plan", required: true },
+    planId: { type: Schema.Types.ObjectId, ref: "Plan" },
 
     // Reference to the user or dealership that has subscribed to this plan
     subscriberId: { type: Schema.Types.ObjectId, ref: "User", required: true },

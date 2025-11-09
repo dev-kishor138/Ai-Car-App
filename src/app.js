@@ -20,9 +20,18 @@ const app = express();
 
 // DB connect
 await connectDB();
-
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    // only save raw body if content-type looks like JSON (optional)
+    // You can always save for everything, but skip for huge uploads if needed.
+    req.rawBody = buf;
+  }
+}));
+
+app.post("/stripe/webhook", handleStripeWebhook);
+
+
 
 // Routes
 app.use("/", globalRoutes);
@@ -32,11 +41,7 @@ app.use("/admin", isAuthenticated, isAdmin, adminRoutes);
 app.use("/api", pusherRoutes);
 
 app.use("/subscription", isAuthenticated, isUser, subscriptionRoutes);
-app.post(
-  "/stripe/webhook",
-  express.raw({ type: "application/json" }),
-  handleStripeWebhook
-);
+
 app.get("/", (_req, res) => res.send("Hello, World!"));
 
 // Error handler
