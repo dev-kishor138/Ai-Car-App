@@ -20,18 +20,16 @@ const app = express();
 
 // DB connect
 await connectDB();
+
+
+app.post(
+  "/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
+
 app.use(cors());
-app.use(express.json({
-  verify: (req, _res, buf) => {
-    // only save raw body if content-type looks like JSON (optional)
-    // You can always save for everything, but skip for huge uploads if needed.
-    req.rawBody = buf;
-  }
-}));
-
-app.post("/stripe/webhook", handleStripeWebhook);
-
-
+app.use(express.json());
 
 // Routes
 app.use("/", globalRoutes);

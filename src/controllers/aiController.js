@@ -1,4 +1,5 @@
 import axios from "axios";
+import Car from "../models/Car.js";
 
 const PYTHON_API_BASE = process.env.PYTHON_API_URL || "http://127.0.0.1:8000";
 // console.log("PYTHON_API_BASE", PYTHON_API_BASE);
