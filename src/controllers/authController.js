@@ -133,24 +133,37 @@ export const loginUser = async (req, res, next) => {
     // Generate Tokens
     const { accessToken, refreshToken } = generateTokens(user);
 
-   const now = new Date();
+    // If user is admin => bypass trial/subscription checks and login directly
+    const role = (user.role || "").toString().toLowerCase();
+    if (role === "admin") {
+      return res.status(200).json({
+        message: "Login successful (admin)",
+        accessToken,
+        refreshToken,
+      });
+    }
+
+    const now = new Date();
 
     // Check subscription (if present)
     const hasActiveSub =
       user.hasActiveSubscription ||
-      (user.subscriptionId && user.subscriptionId.status === "active" &&
-        user.subscriptionId.endDate && new Date(user.subscriptionId.endDate) >= now);
+      (user.subscriptionId &&
+        user.subscriptionId.status === "active" &&
+        user.subscriptionId.endDate &&
+        new Date(user.subscriptionId.endDate) >= now);
 
     // Check trial validity
     const trialValid = user.trialEnd && new Date(user.trialEnd) >= now;
 
     if (!hasActiveSub && !trialValid) {
-          return res.status(403).json({
-          message: "Access denied. Your trial has expired and you don't have an active subscription. Please subscribe to continue.",
-          trialExpired: true,
-          accessToken,
-          refreshToken,
-        });
+      return res.status(403).json({
+        message:
+          "Access denied. Your trial has expired and you don't have an active subscription. Please subscribe to continue.",
+        trialExpired: true,
+        accessToken,
+        refreshToken,
+      });
     }
 
     res
