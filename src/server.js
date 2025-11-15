@@ -14,23 +14,12 @@ import pusherRoutes from "./routes/pusherRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import { handleStripeWebhook } from "./controllers/subscriptionController.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
 await connectDB();
 
-
-
-// app.post(
-//   "/stripe/webhook",
-//   express.raw({ type: "application/json" }),
-//   handleStripeWebhook
-// );
-
-// // Enable CORS for all routes
-// app.use(cors());
-// // Middleware to parse JSON
-// app.use(express.json());
 
 app.use(cors());
 app.use(express.json({
@@ -40,6 +29,7 @@ app.use(express.json({
     req.rawBody = buf;
   }
 }));
+app.use(cookieParser());
 
 app.post("/stripe/webhook", handleStripeWebhook);
 

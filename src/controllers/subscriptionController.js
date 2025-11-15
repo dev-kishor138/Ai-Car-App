@@ -26,8 +26,8 @@ export const createSubscriptionSession = async (req, res, next) => {
       payment_method_types: ["card"],
       customer_email: user.email,
       line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
-      success_url: `${process.env.FRONTEND_URL}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/subscription-cancel`,
+      success_url: `drivest://subscription-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `drivest://subscription-cancel`,
     });
 
     res.json({ url: session.url });
@@ -101,7 +101,7 @@ export const handleStripeWebhook = async (req, res) => {
       });
 
       // 3️⃣ Create invoice document
-      await Invoice.create({
+      const invoice = await Invoice.create({
         userId: user._id,
         subscriptionId: subscription._id,
         // planId: subscription.planId,
@@ -118,9 +118,20 @@ export const handleStripeWebhook = async (req, res) => {
         periodEnd: subscription.endDate,
       });
 
-      // 4️⃣ Update user subscription
-      user.subscriptionActive = true;
-      user.subscriptionId = subscription._id;
+
+      // console.log("user", user)
+      // 4️⃣ Update user subscription fields (THIS IS THE NEW PART)
+      user.hasActiveSubscription = true;                     // schema field you already have
+      user.subscriptionId = subscription._id;                // reference to subscription
+      user.subscriptionStart = subscription.startDate;      // optional new field
+      user.subscriptionEnd = subscription.endDate;          // optional new field
+      user.subscriptionPlanName = subscription.planName;    // optional for quick UI display
+      user.subscriptionStatus = subscription.status;        // mirror status
+      user.lastSubscriptionPaymentAt = invoice.paidAt;      // optional useful field
+      user.stripeCustomerId = subscription.stripeCustomerId; // optional convenience
+      // If you had trial fields, mark trial used / clear trial
+      user.isTrialUsed = true;
+      user.trialEnd = null;
       await user.save();
 
       // 5️⃣ Send email to user

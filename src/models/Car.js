@@ -4,7 +4,7 @@ import softDeletePlugin from "../lib/softDeletePlugin.js";
 const carSchema = new Schema(
   {
     // Ownership
-    dealerId: { type: Schema.Types.ObjectId, ref: "Dealership", required: true, index: true },
+    dealerId: { type: Schema.Types.ObjectId, ref: "Dealership",  index: true },
     sellerUserId: { type: Schema.Types.ObjectId, ref: "User", index: true },
 
     // Lifecycle state of the listing
