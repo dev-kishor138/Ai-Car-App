@@ -133,30 +133,58 @@ export const loginUser = async (req, res, next) => {
     // Generate Tokens
     const { accessToken, refreshToken } = generateTokens(user);
 
-    // If user is admin => bypass trial/subscription checks and login directly
-    const role = (user.role || "").toString().toLowerCase();
-    if (role === "admin") {
-      return res.status(200).json({
-        message: "Login successful (admin)",
-        accessToken,
-        refreshToken,
-      });
-    }
-
     const now = new Date();
 
-    // Check subscription (if present)
-    const hasActiveSub =
-      user.hasActiveSubscription ||
-      (user.subscriptionId &&
-        user.subscriptionId.status === "active" &&
-        user.subscriptionId.endDate &&
-        new Date(user.subscriptionId.endDate) >= now);
+      // Normalize role check (protect against undefined or case differences)
+    const role = (user.role || "").toString().toLowerCase();
 
-    // Check trial validity
-    const trialValid = user.trialEnd && new Date(user.trialEnd) >= now;
+    // If role is admin (or contains 'admin'), skip subscription/trial checks
+    const isAdmin = role === "admin" || role.includes("admin");
 
-    if (!hasActiveSub && !trialValid) {
+    let allowed = false;
+
+    if (isAdmin) {
+      // Admin bypasses subscription/trial checks
+      allowed = true;
+    } else {
+      // Regular user -> check active subscription or valid trial
+      const hasActiveSub =
+        !!user.hasActiveSubscription ||
+        !!(user.subscriptionId && user.subscriptionId.status === "active" &&
+           user.subscriptionId.endDate && new Date(user.subscriptionId.endDate) >= now);
+
+      const trialValid = !!(user.trialEnd && new Date(user.trialEnd) >= now);
+
+      if (hasActiveSub || trialValid) {
+        allowed = true;
+      } else {
+        allowed = false;
+      }
+    }
+
+    // // Check subscription (if present)
+    // const hasActiveSub =
+    //   user.hasActiveSubscription ||
+    //   (user.subscriptionId &&
+    //     user.subscriptionId.status === "active" &&
+    //     user.subscriptionId.endDate &&
+    //     new Date(user.subscriptionId.endDate) >= now);
+
+    // // Check trial validity
+    // const trialValid = user.trialEnd && new Date(user.trialEnd) >= now;
+
+    // if (!hasActiveSub && !trialValid) {
+    //   return res.status(403).json({
+    //     message:
+    //       "Access denied. Your trial has expired and you don't have an active subscription. Please subscribe to continue.",
+    //     trialExpired: true,
+    //     accessToken,
+    //     refreshToken,
+    //   });
+    // }
+
+    if (!allowed) {
+      // IMPORTANT: do NOT return tokens here (we didn't generate any yet)
       return res.status(403).json({
         message:
           "Access denied. Your trial has expired and you don't have an active subscription. Please subscribe to continue.",
