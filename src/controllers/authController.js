@@ -133,7 +133,7 @@ export const loginUser = async (req, res, next) => {
     // Generate Tokens
     const { accessToken, refreshToken } = generateTokens(user);
 
-    const now = new Date();
+   const now = new Date();
 
       // Normalize role check (protect against undefined or case differences)
     const role = (user.role || "").toString().toLowerCase();
