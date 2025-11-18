@@ -60,8 +60,6 @@ export const aiSuggest = async (req, res, next) => {
   }
 };
 
-
-
 export const importScrapedCars = async (req, res, next) => {
   try {
     const cars = req.body.cars;
@@ -69,6 +67,7 @@ export const importScrapedCars = async (req, res, next) => {
       "*****Cars payload length:",
       Array.isArray(cars) ? cars.length : 0
     );
+    console.log("*****Cars payload", Array.isArray(cars) ? cars : null);
 
     if (!Array.isArray(cars)) {
       return res
@@ -140,6 +139,7 @@ export const importScrapedCars = async (req, res, next) => {
         title: scraped.title || "",
         make: scraped.make || scraped.brand || "",
         model: scraped.model || "",
+        brand: scraped.brand || "",
         trim: scraped.trim || scraped.vehicleTrim || "",
         year:
           scraped.year_numeric || scraped.year

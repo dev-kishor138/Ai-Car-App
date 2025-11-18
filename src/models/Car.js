@@ -25,6 +25,7 @@ const carSchema = new Schema(
     // Core identity
     make: { type: String, index: true },
     model: { type: String, index: true },
+    brand: { type: String, index: true },
     trim: { type: String },
     year: { type: Number, index: true },
 

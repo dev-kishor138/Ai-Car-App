@@ -39,7 +39,11 @@ export const searchCars = async (req, res, next) => {
       page = 1,
       limit = 10,
       sort = "-publishedAt",
+      initial, // <-- new flag: ?initial=true will return ALL matching items (no skip/limit)
+      full, // <-- alias: ?full=true also works
     } = req.query;
+
+    const isInitial = String(initial || full || "").toLowerCase() === "true";
 
     const pageNum = Math.max(1, parseInt(page) || 1);
     const perPage = Math.min(100, Math.max(1, parseInt(limit) || 10));
@@ -47,11 +51,9 @@ export const searchCars = async (req, res, next) => {
 
     // ---------- Filter build ----------
     const filter = {};
-    // soft-delete থাকলে: filter.isDeleted = { $ne: true };
+    // if you have soft-delete: filter.isDeleted = { $ne: true };
 
     if (status) filter.status = status;
-
-    // exact numeric filters
     if (year) filter.year = Number(year);
 
     if (minPrice || maxPrice) {
@@ -60,20 +62,14 @@ export const searchCars = async (req, res, next) => {
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
 
-    // regex helpers (case-insensitive)
     const rx = (v) => (v ? new RegExp(String(v).trim(), "i") : undefined);
 
     if (title) filter.title = rx(title);
     if (brand || make) filter.make = rx(brand || make);
     if (model) filter.model = rx(model);
 
-    // free-text q: two strategies
-    // A) text index থাকলে $text
-    // B) না থাকলে $or + regex
     let useText = false;
-    if (q && q.trim()) {
-      useText = true; // ধরলাম text index আছে; নিচে fallback-ও দিলাম
-    }
+    if (q && q.trim()) useText = true;
 
     // ---------- Projection & Sort ----------
     let projection = {
@@ -100,11 +96,9 @@ export const searchCars = async (req, res, next) => {
 
     let sortSpec = {};
     if (sort === "relevance" && q) {
-      // text score sort (text index থাকলে)
       projection = { ...projection, score: { $meta: "textScore" } };
       sortSpec = { score: { $meta: "textScore" } };
     } else {
-      // parse generic sort: "-price" / "price" / "year" / "-publishedAt" etc.
       const s = String(sort).trim();
       if (s.startsWith("-")) {
         sortSpec[s.slice(1)] = -1;
@@ -114,46 +108,65 @@ export const searchCars = async (req, res, next) => {
     }
 
     // ---------- Query build ----------
-    let query = Car.find(filter, projection);
+    let baseFilter = { ...filter };
+    let query = Car.find(baseFilter, projection);
 
     if (q && q.trim()) {
-      // Try text search first
       try {
-        query = Car.find(
-          { ...filter, $text: { $search: q.trim() } },
-          { ...projection, score: { $meta: "textScore" } }
-        );
+        // try text search
+        baseFilter = { ...filter, $text: { $search: q.trim() } };
+        query = Car.find(baseFilter, {
+          ...projection,
+          score: { $meta: "textScore" },
+        });
         if (sort === "relevance") sortSpec = { score: { $meta: "textScore" } };
       } catch {
-        // Fallback: regex OR
-        query = Car.find(
-          {
-            ...filter,
-            $or: [
-              { title: rx(q) },
-              { make: rx(q) },
-              { model: rx(q) },
-              { description: rx(q) },
-            ],
-          },
-          projection
-        );
+        // fallback regex OR
+        baseFilter = {
+          ...filter,
+          $or: [
+            { title: rx(q) },
+            { make: rx(q) },
+            { model: rx(q) },
+            { description: rx(q) },
+          ],
+        };
+        query = Car.find(baseFilter, projection);
       }
     }
 
     // ---------- Exec ----------
+    if (isInitial) {
+      // return ALL matching documents (no skip/limit)
+      const items = await query
+        .sort(sortSpec)
+        .collation({ locale: "en", strength: 2 })
+        .lean();
+      const total = items.length;
+      return res.status(200).json({
+        success: true,
+        message: "All cars retrieved (initial=true)",
+        data: items,
+        meta: {
+          page: 1,
+          limit: total,
+          total,
+          totalPages: 1,
+          sort,
+          initial: true,
+        },
+      });
+    }
+
+    // normal paginated response
     const [items, total] = await Promise.all([
       query
         .sort(sortSpec)
         .skip(skip)
         .limit(perPage)
-        .collation({ locale: "en", strength: 2 }) // case-insensitive sort
+        .collation({ locale: "en", strength: 2 })
         .lean(),
-      Car.countDocuments(
-        q && q.trim()
-          ? query.getFilter() // count with same filter
-          : filter
-      ),
+      Car.countDocuments(baseFilter),
     ]);
 
     res.status(200).json({
@@ -166,6 +179,7 @@ export const searchCars = async (req, res, next) => {
         total,
         totalPages: Math.ceil(total / perPage),
         sort,
+        initial: false,
       },
     });
   } catch (error) {
