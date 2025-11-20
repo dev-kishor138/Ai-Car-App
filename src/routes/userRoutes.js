@@ -10,6 +10,7 @@ import {
   toggleFavorite,
 } from "../controllers/favoriteController.js";
 import {
+  deactivateUser,
   editProfile,
   resetUserPassword,
 } from "../controllers/userProfileController.js";
@@ -69,6 +70,8 @@ userRoutes.get("/cars/compare", compareCars);
 // notification
 userRoutes.get("/notifications", getNotification);
 userRoutes.delete("/notification/:id", deleteNotification);
+
+userRoutes.put("/deactivate", deactivateUser);
 
 
 // // Create subscription session

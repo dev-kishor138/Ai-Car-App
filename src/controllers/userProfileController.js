@@ -1,6 +1,6 @@
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import DevBuildError from "../lib/DevBuildError.js";
-import { passwordResetTemplate } from "../lib/emailTemplates.js";
+import { deactivateMail, passwordResetTemplate } from "../lib/emailTemplates.js";
 import { sendEmail } from "../lib/mailer.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
@@ -59,6 +59,34 @@ export const resetUserPassword = async (req, res, next) => {
     });
 
     res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// ✅ DeActivate User
+export const deactivateUser = async (req, res, next) => {
+  try {
+    const { email } = req.user;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new DevBuildError("User not found", 404);
+    }
+
+ 
+
+    user.status = 'inactive';
+    await user.save();
+
+    await sendEmail({
+      to: user.email,
+      subject: "Your Account Is Deactive Now",
+      html: deactivateMail(user.name),
+    });
+
+    res.status(200).json({ message: "Account deactivate succesfully" });
   } catch (error) {
     next(error);
   }

@@ -57,7 +57,9 @@ export const handleStripeWebhook = async (req, res) => {
   const payload = req.rawBody;
   if (!payload || !Buffer.isBuffer(payload)) {
     console.error("No raw body buffer available for Stripe verification");
-    return res.status(400).send("No raw body available for webhook verification");
+    return res
+      .status(400)
+      .send("No raw body available for webhook verification");
   }
 
   let event;
@@ -74,17 +76,16 @@ export const handleStripeWebhook = async (req, res) => {
     console.error("Error From Subscription: ", err);
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
-  // console.log("✅ stripe event verified:", event.type);
-
+  // console.log("stripe event verified:", event.type);
 
   switch (event.type) {
     case "checkout.session.completed":
       const session = event.data.object;
 
-      // 1️⃣ Find user
+      // Find user
       const user = await User.findOne({ email: session.customer_email });
 
-      // 2️⃣ Create subscription document
+      // Create subscription document
       const subscription = await Subscription.create({
         subscriberId: user._id,
         planName: "Pro Plan", // manually fixed name
@@ -100,7 +101,7 @@ export const handleStripeWebhook = async (req, res) => {
         },
       });
 
-      // 3️⃣ Create invoice document
+      // Create invoice document
       const invoice = await Invoice.create({
         userId: user._id,
         subscriptionId: subscription._id,
@@ -118,20 +119,20 @@ export const handleStripeWebhook = async (req, res) => {
         periodEnd: subscription.endDate,
       });
 
-
       // console.log("user", user)
-      // 4️⃣ Update user subscription fields (THIS IS THE NEW PART)
-      user.hasActiveSubscription = true;                     // schema field you already have
-      user.subscriptionId = subscription._id;                // reference to subscription
-      user.subscriptionStart = subscription.startDate;      // optional new field
-      user.subscriptionEnd = subscription.endDate;          // optional new field
-      user.subscriptionPlanName = subscription.planName;    // optional for quick UI display
-      user.subscriptionStatus = subscription.status;        // mirror status
-      user.lastSubscriptionPaymentAt = invoice.paidAt;      // optional useful field
+      // Update user subscription fields (THIS IS THE NEW PART)
+      user.hasActiveSubscription = true; // schema field you already have
+      user.subscriptionId = subscription._id; // reference to subscription
+      user.subscriptionStart = subscription.startDate; // optional new field
+      user.subscriptionEnd = subscription.endDate; // optional new field
+      user.subscriptionPlanName = subscription.planName; // optional for quick UI display
+      user.subscriptionStatus = subscription.status; // mirror status
+      user.lastSubscriptionPaymentAt = invoice.paidAt; // optional useful field
       user.stripeCustomerId = subscription.stripeCustomerId; // optional convenience
       // If you had trial fields, mark trial used / clear trial
       user.isTrialUsed = true;
       user.trialEnd = null;
+      user.status = "active";
       await user.save();
 
       // 5️⃣ Send email to user

@@ -56,7 +56,7 @@ export const welcomeEmailTemplate = (name) => {
     title: "Welcome to Drivest!",
     body,
     buttonText: "Go to App",
-    buttonUrl: "https://yourwebsite.com/login",
+    buttonUrl: "drivest://login",
   });
 };
 
@@ -74,7 +74,7 @@ export const otpEmailTemplate = (name, otpCode) => {
     title: "Your OTP Code",
     body,
     buttonText: "Verify Now",
-    buttonUrl: "https://yourwebsite.com/verify-otp",
+    buttonUrl: "drivest://verify-otp",
   });
 };
 
@@ -90,7 +90,7 @@ export const passwordResetTemplate = (name) => {
     title: "Password Reset Successful",
     body,
     buttonText: "Log In Now",
-    buttonUrl: "https://yourwebsite.com/login",
+    buttonUrl: "drivest://login",
   });
 };
 
@@ -107,6 +107,23 @@ export const subscriptionSuccessTemplate = (name) => {
     title: "Subscription Successful!",
     body,
     buttonText: "Explore Now",
-    buttonUrl: "https://yourwebsite.com/dashboard",
+    buttonUrl: "drivest://login",
+  });
+};
+
+
+// Subscription success email template using the base template
+export const deactivateMail = (name) => {
+  const body = `
+    <p>Your Account is now deactivate!</p>
+    <p>You now have not access to all features.</p>
+    <p>Thank you for choosing our platform.</p>
+  `;
+  return baseEmailTemplate({
+    name,
+    title: "Deactive The Account!",
+    body,
+    buttonText: "Explore Now",
+    buttonUrl: "drivest://login",
   });
 };

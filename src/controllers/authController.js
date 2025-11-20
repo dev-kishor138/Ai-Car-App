@@ -98,107 +98,190 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
-// ✅ User Login with JWT
+// // ✅ User Login with JWT
+// export const loginUser = async (req, res, next) => {
+//   try {
+//     const { email, password } = req.body;
+//     // console.log("📌 Login Request:", email, password);
+
+//     // const user = await User.findOne({ email });
+//     const user = await User.findOne({ email })
+//       .select(
+//         "name email role trialEnd hasActiveSubscription subscriptionId +password"
+//       )
+//       .populate({
+//         path: "subscriptionId",
+//         select: "status endDate", // subscription থেকে দরকারি ফিল্ডগুলো
+//       })
+//       .lean();
+
+//     // console.log("user:", user);
+//     // console.log("Hashed Password (db):", user.password);
+
+//     if (!user) {
+//       throw new DevBuildError("User not found", 400);
+//       // return res.status(400).json({ message: "User not found" });
+//     }
+
+//     // Password Matching
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       // return res.status(400).json({ message: "Invalid credentials" });
+//       throw new DevBuildError("Invalid credentials", 400);
+//     }
+
+//     // Generate Tokens
+//     const { accessToken, refreshToken } = generateTokens(user);
+
+//     const now = new Date();
+
+//     // Normalize role check (protect against undefined or case differences)
+//     const role = (user.role || "").toString().toLowerCase();
+
+//     // If role is admin (or contains 'admin'), skip subscription/trial checks
+//     const isAdmin = role === "admin" || role.includes("admin");
+
+//     let allowed = false;
+
+//     if (isAdmin) {
+//       // Admin bypasses subscription/trial checks
+//       allowed = true;
+//     } else {
+//       // Regular user -> check active subscription or valid trial
+//       const hasActiveSub =
+//         !!user.hasActiveSubscription ||
+//         !!(
+//           user.subscriptionId &&
+//           user.subscriptionId.status === "active" &&
+//           user.subscriptionId.endDate &&
+//           new Date(user.subscriptionId.endDate) >= now
+//         );
+
+//       const trialValid = !!(user.trialEnd && new Date(user.trialEnd) >= now);
+
+//       if (hasActiveSub || trialValid) {
+//         allowed = true;
+//       } else {
+//         allowed = false;
+//       }
+//     }
+
+//     if (!allowed) {
+//       // IMPORTANT: do NOT return tokens here (we didn't generate any yet)
+//       return res.status(403).json({
+//         message:
+//           "Access denied. Your trial has expired and you don't have an active subscription. Please subscribe to continue.",
+//         trialExpired: true,
+//         accessToken,
+//         refreshToken,
+//       });
+//     }
+
+//     res
+//       .status(200)
+//       .json({ message: "Login successful", accessToken, refreshToken });
+//   } catch (error) {
+//     // res.status(500).json({ error: error.message });
+//     next(error);
+//   }
+// };
+
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // console.log("📌 Login Request:", email, password);
 
-    // const user = await User.findOne({ email });
     const user = await User.findOne({ email })
       .select(
-        "name email role trialEnd hasActiveSubscription subscriptionId +password"
+        "name email role status trialEnd hasActiveSubscription subscriptionId +password"
       )
       .populate({
         path: "subscriptionId",
-        select: "status endDate", // subscription থেকে দরকারি ফিল্ডগুলো
+        select: "status endDate",
       })
       .lean();
 
-    // console.log("user:", user);
-    // console.log("Hashed Password (db):", user.password);
-
     if (!user) {
       throw new DevBuildError("User not found", 400);
-      // return res.status(400).json({ message: "User not found" });
     }
 
-    // Password Matching
+    // 🔐 Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      // return res.status(400).json({ message: "Invalid credentials" });
       throw new DevBuildError("Invalid credentials", 400);
     }
 
-    // Generate Tokens
-    const { accessToken, refreshToken } = generateTokens(user);
-
-   const now = new Date();
-
-      // Normalize role check (protect against undefined or case differences)
+    // Normalize role
     const role = (user.role || "").toString().toLowerCase();
-
-    // If role is admin (or contains 'admin'), skip subscription/trial checks
     const isAdmin = role === "admin" || role.includes("admin");
 
-    let allowed = false;
-
+    // -----------------------------------------
+    // ⭐ ADMIN → No status check, no subscription check, nothing.
+    // -----------------------------------------
     if (isAdmin) {
-      // Admin bypasses subscription/trial checks
-      allowed = true;
-    } else {
-      // Regular user -> check active subscription or valid trial
-      const hasActiveSub =
-        !!user.hasActiveSubscription ||
-        !!(user.subscriptionId && user.subscriptionId.status === "active" &&
-           user.subscriptionId.endDate && new Date(user.subscriptionId.endDate) >= now);
+      const { accessToken, refreshToken } = generateTokens(user);
 
-      const trialValid = !!(user.trialEnd && new Date(user.trialEnd) >= now);
-
-      if (hasActiveSub || trialValid) {
-        allowed = true;
-      } else {
-        allowed = false;
-      }
-    }
-
-    // // Check subscription (if present)
-    // const hasActiveSub =
-    //   user.hasActiveSubscription ||
-    //   (user.subscriptionId &&
-    //     user.subscriptionId.status === "active" &&
-    //     user.subscriptionId.endDate &&
-    //     new Date(user.subscriptionId.endDate) >= now);
-
-    // // Check trial validity
-    // const trialValid = user.trialEnd && new Date(user.trialEnd) >= now;
-
-    // if (!hasActiveSub && !trialValid) {
-    //   return res.status(403).json({
-    //     message:
-    //       "Access denied. Your trial has expired and you don't have an active subscription. Please subscribe to continue.",
-    //     trialExpired: true,
-    //     accessToken,
-    //     refreshToken,
-    //   });
-    // }
-
-    if (!allowed) {
-      // IMPORTANT: do NOT return tokens here (we didn't generate any yet)
-      return res.status(403).json({
-        message:
-          "Access denied. Your trial has expired and you don't have an active subscription. Please subscribe to continue.",
-        trialExpired: true,
+      return res.status(200).json({
+        message: "Admin login successful",
         accessToken,
         refreshToken,
       });
     }
 
-    res
-      .status(200)
-      .json({ message: "Login successful", accessToken, refreshToken });
+    // -----------------------------------------
+    // ⭐ NON-ADMIN USERS → Status Check
+    // -----------------------------------------
+    const status = (user.status || "").toLowerCase();
+
+    if (status === "inactive" || status === "deactivated") {
+      return res.status(403).json({
+        message: "You are a deactivated user.",
+        code: "USER_DEACTIVATED",
+      });
+    }
+
+    if (status === "pending") {
+      return res.status(403).json({
+        message: "Your account is pending admin approval.",
+        code: "USER_PENDING",
+      });
+    }
+
+    // -----------------------------------------
+    // ⭐ NON-ADMIN USERS → Subscription / Trial Check
+    // -----------------------------------------
+    const now = new Date();
+
+    const hasActiveSub =
+      !!user.hasActiveSubscription ||
+      !!(
+        user.subscriptionId &&
+        user.subscriptionId.status === "active" &&
+        user.subscriptionId.endDate &&
+        new Date(user.subscriptionId.endDate) >= now
+      );
+
+    const trialValid = !!(user.trialEnd && new Date(user.trialEnd) >= now);
+
+    if (!hasActiveSub && !trialValid) {
+      return res.status(403).json({
+        message:
+          "Access denied. Your trial expired and no active subscription found.",
+        trialExpired: true,
+        code: "NO_ACTIVE_SUBSCRIPTION",
+      });
+    }
+
+    // -----------------------------------------
+    // ⭐ Everything OK → Generate tokens
+    // -----------------------------------------
+    const { accessToken, refreshToken } = generateTokens(user);
+
+    return res.status(200).json({
+      message: "Login successful",
+      accessToken,
+      refreshToken,
+    });
   } catch (error) {
-    // res.status(500).json({ error: error.message });
     next(error);
   }
 };

@@ -77,6 +77,7 @@ export const searchCars = async (req, res, next) => {
       make: 1,
       model: 1,
       year: 1,
+      brand: 1,
       price: 1,
       currency: 1,
       mileage: 1,
@@ -86,6 +87,7 @@ export const searchCars = async (req, res, next) => {
       driveType: 1,
       color: 1,
       status: 1,
+      image: 1,
       "media.cover.url": 1,
       publishedAt: 1,
       createdAt: 1,
@@ -372,6 +374,40 @@ export const getCarDetails = async (req, res, next) => {
       success: true,
       message: "Car details fetched successfully",
       data: car,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteCar = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Car ID is required" });
+    }
+
+    // Check if valid MongoID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Car ID" });
+    }
+
+    const car = await Car.findById(id);
+
+    if (!car) {
+      return res.status(404).json({ success: false, message: "Car not found" });
+    }
+
+    await car.deleteOne(); // or car.remove()
+
+    res.status(200).json({
+      success: true,
+      message: "Car Deleted successfully",
     });
   } catch (error) {
     next(error);
