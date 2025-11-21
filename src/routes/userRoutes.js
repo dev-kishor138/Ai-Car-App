@@ -24,7 +24,12 @@ import {
   handleStripeWebhook,
 } from "../controllers/subscriptionController.js";
 import parser from "../storage/imageParser.js";
-import { deleteNotification, getNotification } from "../controllers/notificationController.js";
+import {
+  deleteNotification,
+  getNotification,
+  markAllAsRead,
+  markNotificationsAsRead,
+} from "../controllers/notificationController.js";
 // import {
 //   createSubscriptionSession,
 //   handleStripeWebhook,
@@ -69,10 +74,11 @@ userRoutes.get("/cars/compare", compareCars);
 
 // notification
 userRoutes.get("/notifications", getNotification);
+userRoutes.put("/notification-read", markNotificationsAsRead);
+userRoutes.put("/notifications-all-read", markAllAsRead);
 userRoutes.delete("/notification/:id", deleteNotification);
 
 userRoutes.put("/deactivate", deactivateUser);
-
 
 // // Create subscription session
 // userRoutes.post("/subscription/create", createSubscriptionSession);
