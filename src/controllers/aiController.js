@@ -62,9 +62,11 @@ export const aiSuggest = async (req, res, next) => {
 
 // inport cars
 export const importScrapedCars = async (req, res, next) => {
-  console.time("IMPORT_SCRAPED_CARS");
+  // console.time("IMPORT_SCRAPED_CARS");
   try {
     const cars = req.body.cars;
+
+    const now = new Date();
 
     console.log(
       "*****Cars payload length:",
