@@ -10,7 +10,7 @@ import {
 } from "../controllers/userController.js";
 import { resetPassword } from "../controllers/authController.js";
 import { getAllTicket } from "../controllers/ticketController.js";
-import { getAllCar, searchCars } from "../controllers/carController.js";
+import { deleteCar, getAllCar, searchCars } from "../controllers/carController.js";
 import { deleteNotification } from "../controllers/notificationController.js";
 import parser from "../storage/imageParser.js";
 import { editProfile, resetUserPassword } from "../controllers/userProfileController.js";
@@ -42,6 +42,7 @@ adminRoutes.get("/tickets", getAllTicket);
 
 // car related routes
 adminRoutes.get("/cars", searchCars);
+adminRoutes.delete("/car/:id", deleteCar);
 
 // Notification delete routes
 adminRoutes.delete("/notification/:id", deleteNotification);

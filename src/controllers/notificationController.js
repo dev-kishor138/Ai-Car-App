@@ -1,7 +1,6 @@
 import DevBuildError from "../lib/DevBuildError.js";
 import Notification from "../models/Notification.js";
 
-
 // ✅ Get Notification
 export const getNotification = async (req, res, next) => {
   try {
@@ -28,5 +27,48 @@ export const deleteNotification = async (req, res, next) => {
     res.status(200).json({ message: "Notification deleted successfully" });
   } catch (error) {
     next(error);
+  }
+};
+
+// ✅ Mark Multiple Notifications as Read
+export const markNotificationsAsRead = async (req, res, next) => {
+  try {
+    const { ids } = req.body; // array of notification IDs
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      throw new DevBuildError("No notification IDs provided", 400);
+    }
+
+    const result = await Notification.updateMany(
+      { _id: { $in: ids }, userId: req.user._id },
+      { $set: { status: "read", seenAt: new Date() } }
+    );
+
+    res.json({
+      success: true,
+      message: "Notifications marked as read",
+      updatedCount: result.modifiedCount,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// ✅ Mark Ass as Read
+export const markAllAsRead = async (req, res, next) => {
+  try {
+    const result = await Notification.updateMany(
+      { userId: req.user._id, status: "unread" },
+      { $set: { status: "read", seenAt: new Date() } }
+    );
+
+    res.json({
+      success: true,
+      message: "All notifications marked as read",
+      updatedCount: result.modifiedCount,
+    });
+  } catch (err) {
+    next(err);
   }
 };

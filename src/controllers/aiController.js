@@ -60,33 +60,36 @@ export const aiSuggest = async (req, res, next) => {
   }
 };
 
-
-
+// inport cars
 export const importScrapedCars = async (req, res, next) => {
+  // console.time("IMPORT_SCRAPED_CARS");
   try {
     const cars = req.body.cars;
+
+    const now = new Date();
+
     console.log(
       "*****Cars payload length:",
       Array.isArray(cars) ? cars.length : 0
     );
+    console.log("*****Cars payload", Array.isArray(cars) ? cars : null);
 
     if (!Array.isArray(cars)) {
+      console.timeEnd("IMPORT_SCRAPED_CARS");
       return res
         .status(400)
         .json({ success: false, message: "Invalid format" });
     }
 
     const imported = [];
-    const MAX_IMAGES_PER_CAR = Number(process.env.MAX_IMAGES_PER_CAR) || 12;
 
-    // Load recipients ONCE (admins + users). If you want different recipients (e.g., subscribers),
-    // change this query accordingly.
+    // Recipients একবারই লোড করব (active admins + users)
     const recipients = await User.find({
       status: "active",
       role: { $in: ["admin", "user"] },
     }).select("_id name email");
 
-    // Helper: send notifications for a newly created car
+    // helper: নতুন car তৈরি হলে notification পাঠানোর জন্য
     const notifyRecipientsForNewCar = async (carDoc, mapped) => {
       if (!recipients || recipients.length === 0) return;
 
@@ -128,18 +131,22 @@ export const importScrapedCars = async (req, res, next) => {
         }
       });
 
-      // Be resilient: wait for all attempts, but don't throw on partial failure
       await Promise.allSettled(notifPromises);
     };
 
+    // এখানে আমরা notification গুলো পরে চালানোর জন্য queue তে রাখব
+    const notificationTasks = [];
+
+    // ===== মূল import loop =====
     for (const scraped of cars) {
-      // map basic fields
+      // basic mapping
       const mapped = {
-        dealerId: scraped.dealerId || scraped.dealerId || undefined, // optional
+        dealerId: scraped.dealerId || undefined,
         sellerUserId: scraped.sellerUserId || undefined,
         title: scraped.title || "",
         make: scraped.make || scraped.brand || "",
         model: scraped.model || "",
+        brand: scraped.brand || "",
         trim: scraped.trim || scraped.vehicleTrim || "",
         year:
           scraped.year_numeric || scraped.year
@@ -181,22 +188,22 @@ export const importScrapedCars = async (req, res, next) => {
         ai: scraped.ai || undefined,
       };
 
-      // build upsert query: prefer VIN
+      // upsert query: VIN থাকলে VIN দিয়ে, না থাকলে fallback
       const query = mapped.vin
         ? { vin: mapped.vin }
         : { title: mapped.title, make: mapped.make, year: mapped.year };
 
-      // Detect if document already exists (to decide whether to notify)
+      // আগে থেকে ছিল কিনা detect করার জন্য
       const existing = await Car.findOne(query).select("_id");
 
-      // upsert car doc
+      // upsert
       let carDoc = await Car.findOneAndUpdate(
         query,
         { $set: mapped },
         { new: true, upsert: true }
       );
 
-      // Ensure carDoc is a mongoose document (fallback if findOneAndUpdate returns raw object)
+      // safety
       if (!carDoc || !carDoc._id) {
         carDoc = await Car.findOne(query);
         if (!carDoc) {
@@ -204,88 +211,84 @@ export const importScrapedCars = async (req, res, next) => {
         }
       }
 
-      // --- Media embed handling (no MediaAsset collection) ---
-      const rawImages = Array.isArray(scraped.images) ? scraped.images : [];
-      const imageUrls = rawImages
-        .map((u) => (typeof u === "string" ? u.trim() : ""))
-        .filter(Boolean)
-        .filter((u) => isValidHttpUrl(u))
-        .slice(0, MAX_IMAGES_PER_CAR);
+      // ======= SIMPLE IMAGE HANDLE (just one image field) =======
+      // priority: scraped.images[0] -> scraped.image_url -> scraped.imageUrl
+      const rawImage =
+        (Array.isArray(scraped.images) && scraped.images[0]) ||
+        scraped.image_url ||
+        scraped.imageUrl ||
+        null;
 
-      if (imageUrls.length > 0) {
-        // Option: generate ObjectIds for coverId/galleryIds if you want ids (uncomment to enable)
-        // const generatedIds = imageUrls.map(() => Types.ObjectId());
-        // const coverId = generatedIds[0];
+      let imageUrl = typeof rawImage === "string" ? rawImage.trim() : "";
 
-        // We will keep ids null (or you can uncomment above to set ObjectIds)
-        const coverId = null; // or: generatedIds[0]
-        const galleryIds = imageUrls.map(() => null); // or: generatedIds
+      if (imageUrl && !isValidHttpUrl(imageUrl)) {
+        imageUrl = "";
+      }
 
-        const coverObj = {
-          _id: coverId,
-          url: imageUrls[0] || null,
-          mime: null,
-          thumbUrl: null,
-          width: null,
-          height: null,
-        };
-
-        const galleryObjs = imageUrls.map((u, idx) => ({
-          _id: galleryIds[idx] || null,
-          url: u,
-          mime: null,
-          thumbUrl: null,
-          width: null,
-          height: null,
-        }));
-
-        // assign media subdocument
-        carDoc.media = {
-          coverId: coverId,
-          cover: coverObj,
-          galleryIds: galleryIds,
-          gallery: galleryObjs,
-        };
-
+      if (imageUrl) {
+        // এখানে "image" ফিল্ড ধরেছি; যদি তোমার schema তে অন্য নাম হয়
+        // যেমন: imageUrl, thumbnail ইত্যাদি, তাহলে নিচের লাইনটা সেই অনুযায়ী বদলাবে
+        carDoc.image = imageUrl;
         await carDoc.save();
       }
 
-      // push into imported result
+      // imported summary
       imported.push({
         carId: carDoc._id,
         title: carDoc.title,
-        imagesCount: imageUrls.length,
+        // শুধু info এর জন্য; আসলে একটাই image আছে
+        imagesCount: imageUrl ? 1 : 0,
       });
 
-      // IF it was not existing before, it's a new created record -> notify
+      // নতুন car (existing ছিল না) হলে notification task queue তে রেখে দিচ্ছি
       if (!existing) {
-        // Fire-and-forget but await to ensure we don't overload DB/pusher at once.
-        try {
-          await notifyRecipientsForNewCar(carDoc, mapped);
-        } catch (notifyErr) {
-          console.error(
-            "Notification sending failed for car",
-            carDoc._id,
-            notifyErr
-          );
-          // continue without failing the whole import
-        }
+        notificationTasks.push(
+          notifyRecipientsForNewCar(carDoc, mapped).catch((notifyErr) => {
+            console.error(
+              "Notification sending failed for car",
+              carDoc._id,
+              notifyErr
+            );
+          })
+        );
       }
     }
 
-    return res.status(200).json({
+    // এখানে আমরা দ্রুত response পাঠিয়ে দিচ্ছি
+    console.timeEnd("IMPORT_SCRAPED_CARS");
+    res.status(200).json({
       success: true,
       count: imported.length,
       imported,
     });
+
+    // ==========================
+    // Background এ notifications
+    // ==========================
+    if (notificationTasks.length > 0) {
+      Promise.allSettled(notificationTasks)
+        .then((results) => {
+          const fulfilled = results.filter(
+            (r) => r.status === "fulfilled"
+          ).length;
+          const rejected = results.length - fulfilled;
+          console.log(
+            `[IMPORT_SCRAPED_CARS] Notifications processed. success=${fulfilled}, failed=${rejected}`
+          );
+        })
+        .catch((err) => {
+          console.error(
+            "[IMPORT_SCRAPED_CARS] Error while processing notifications:",
+            err
+          );
+        });
+    }
   } catch (error) {
+    console.timeEnd("IMPORT_SCRAPED_CARS");
     next(error);
   }
 };
 
-/**
- * importScrapedCars (embed media inside Car document; no MediaAsset collection)
- */
 // export const importScrapedCars = async (req, res, next) => {
 //   try {
 //     const cars = req.body.cars;
@@ -304,6 +307,59 @@ export const importScrapedCars = async (req, res, next) => {
 //     const imported = [];
 //     const MAX_IMAGES_PER_CAR = Number(process.env.MAX_IMAGES_PER_CAR) || 12;
 
+//     // Load recipients ONCE (admins + users). If you want different recipients (e.g., subscribers),
+//     // change this query accordingly.
+//     const recipients = await User.find({
+//       status: "active",
+//       role: { $in: ["admin", "user"] },
+//     }).select("_id name email");
+
+//     // Helper: send notifications for a newly created car
+//     const notifyRecipientsForNewCar = async (carDoc, mapped) => {
+//       if (!recipients || recipients.length === 0) return;
+
+//       const notifMessage = `🚗 New car listed: ${
+//         mapped.make || "Unknown Make"
+//       } ${mapped.model || ""} (${mapped.year || "Unknown Year"})`;
+
+//       const notifPromises = recipients.map(async (recipient) => {
+//         try {
+//           const notif = await Notification.create({
+//             userId: recipient._id,
+//             type: "alert",
+//             message: notifMessage,
+//             priority: "normal",
+//             status: "unread",
+//           });
+
+//           const channelName = `private-user-${recipient._id.toString()}`;
+//           try {
+//             await pusher.trigger(channelName, "new-notification", {
+//               notificationId: notif._id,
+//               title: "New Car Added",
+//               message: notifMessage,
+//               createdAt: notif.createdAt,
+//               carId: carDoc._id,
+//             });
+//           } catch (pushErr) {
+//             console.error("Pusher trigger failed for", recipient._id, pushErr);
+//           }
+
+//           return notif;
+//         } catch (err) {
+//           console.error(
+//             "Failed to create notification for",
+//             recipient._id,
+//             err
+//           );
+//           return null;
+//         }
+//       });
+
+//       // Be resilient: wait for all attempts, but don't throw on partial failure
+//       await Promise.allSettled(notifPromises);
+//     };
+
 //     for (const scraped of cars) {
 //       // map basic fields
 //       const mapped = {
@@ -312,6 +368,7 @@ export const importScrapedCars = async (req, res, next) => {
 //         title: scraped.title || "",
 //         make: scraped.make || scraped.brand || "",
 //         model: scraped.model || "",
+//         brand: scraped.brand || "",
 //         trim: scraped.trim || scraped.vehicleTrim || "",
 //         year:
 //           scraped.year_numeric || scraped.year
@@ -358,6 +415,9 @@ export const importScrapedCars = async (req, res, next) => {
 //         ? { vin: mapped.vin }
 //         : { title: mapped.title, make: mapped.make, year: mapped.year };
 
+//       // Detect if document already exists (to decide whether to notify)
+//       const existing = await Car.findOne(query).select("_id");
+
 //       // upsert car doc
 //       let carDoc = await Car.findOneAndUpdate(
 //         query,
@@ -365,8 +425,23 @@ export const importScrapedCars = async (req, res, next) => {
 //         { new: true, upsert: true }
 //       );
 
+//       // Ensure carDoc is a mongoose document (fallback if findOneAndUpdate returns raw object)
+//       if (!carDoc || !carDoc._id) {
+//         carDoc = await Car.findOne(query);
+//         if (!carDoc) {
+//           carDoc = await Car.create(mapped);
+//         }
+//       }
+
 //       // --- Media embed handling (no MediaAsset collection) ---
-//       const rawImages = Array.isArray(scraped.images) ? scraped.images : [];
+//       const rawImages = Array.isArray(scraped.images)
+//         ? scraped.images
+//         : scraped.image_url
+//         ? [scraped.image_url]
+//         : scraped.imageUrl
+//         ? [scraped.imageUrl]
+//         : [];
+
 //       const imageUrls = rawImages
 //         .map((u) => (typeof u === "string" ? u.trim() : ""))
 //         .filter(Boolean)
@@ -411,96 +486,33 @@ export const importScrapedCars = async (req, res, next) => {
 //         await carDoc.save();
 //       }
 
+//       // push into imported result
 //       imported.push({
 //         carId: carDoc._id,
 //         title: carDoc.title,
 //         imagesCount: imageUrls.length,
 //       });
+
+//       // IF it was not existing before, it's a new created record -> notify
+//       if (!existing) {
+//         // Fire-and-forget but await to ensure we don't overload DB/pusher at once.
+//         try {
+//           await notifyRecipientsForNewCar(carDoc, mapped);
+//         } catch (notifyErr) {
+//           console.error(
+//             "Notification sending failed for car",
+//             carDoc._id,
+//             notifyErr
+//           );
+//           // continue without failing the whole import
+//         }
+//       }
 //     }
 
 //     return res.status(200).json({
 //       success: true,
 //       count: imported.length,
 //       imported,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// import Cars
-// export const importScrapedCars = async (req, res, next) => {
-//   try {
-//     const cars = req.body.cars;
-//     console.log("cars", cars);
-
-//     if (!Array.isArray(cars)) {
-//       return res.status(400).json({ message: "Invalid data format" });
-//     }
-
-//     const newCars = cars.map((car) => ({
-//       dealerId: car.dealerId || null,
-//       title: car.title || "",
-//       make: car.make || "",
-//       model: car.model || "",
-//       year: car.year ? Number(car.year) : null,
-//       price: car.price ? Number(car.price) : null,
-//       mileage: car.mileage ? Number(car.mileage) : null,
-//       currency: car.currency || "USD",
-//       status: "published",
-//       description: car.description || "",
-//       source: { type: "scraped", importedAt: new Date() },
-//       location: {
-//         city: car.city || "",
-//         country: car.country || "Unknown",
-//       },
-//     }));
-
-//     // ✅ Insert or Update by VIN/Title
-//     for (const car of newCars) {
-//       await Car.updateOne(
-//         { vin: car.vin || car.title },
-//         { $set: car },
-//         { upsert: true }
-//       );
-
-//       // const notifMessage = `🚗 New car listed: ${car.make} ${car.model} (${
-//       //   car.year || "Unknown Year"
-//       // })`;
-
-//       // const recipients = await User.find({
-//       //   status: "active",
-//       //   role: { $in: ["admin", "user"] },
-//       // }).select("_id name email");
-
-//       // const notifPromises = recipients.map(async (recipient) => {
-//       //   const notif = await Notification.create({
-//       //     userId: recipient._id,
-//       //     type: "alert",
-//       //     message: notifMessage,
-//       //     priority: "normal",
-//       //     status: "unread",
-//       //   });
-
-//       //   // pusher private channel (যেমন private-user-{id})
-//       //   const channelName = `private-user-${recipient._id.toString()}`;
-//       //   await pusher.trigger(channelName, "new-notification", {
-//       //     notificationId: notif._id,
-//       //     title: "New Car Added",
-//       //     message: notifMessage,
-//       //     createdAt: notif.createdAt,
-//       //   });
-
-//       //   return notif;
-//       // });
-
-//       // await Promise.all(notifPromises);
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Cars imported successfully",
-//       count: newCars.length,
 //     });
 //   } catch (error) {
 //     next(error);

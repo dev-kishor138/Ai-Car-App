@@ -4,7 +4,7 @@ import softDeletePlugin from "../lib/softDeletePlugin.js";
 const carSchema = new Schema(
   {
     // Ownership
-    dealerId: { type: Schema.Types.ObjectId, ref: "Dealership",  index: true },
+    dealerId: { type: Schema.Types.ObjectId, ref: "Dealership", index: true },
     sellerUserId: { type: Schema.Types.ObjectId, ref: "User", index: true },
 
     // Lifecycle state of the listing
@@ -25,8 +25,10 @@ const carSchema = new Schema(
     // Core identity
     make: { type: String, index: true },
     model: { type: String, index: true },
+    brand: { type: String, index: true },
     trim: { type: String },
     year: { type: Number, index: true },
+    image: { type: String },
 
     // Pricing
     price: { type: Number, index: true },
@@ -74,7 +76,11 @@ const carSchema = new Schema(
 
     // Source/provenance of the listing
     source: {
-      type: { type: String, enum: ["manual", "scraped", "api"], default: "manual" },
+      type: {
+        type: String,
+        enum: ["manual", "scraped", "api"],
+        default: "manual",
+      },
       sourceId: { type: String, trim: true },
       importedAt: { type: Date },
     },
@@ -136,7 +142,12 @@ carSchema.index({ make: 1, model: 1, year: -1, price: 1 });
  * Text index on key fields (title/description/make/model).
  * Note: Text indexes are single per collection; tune fields as needed.
  */
-carSchema.index({ title: "text", description: "text", make: "text", model: "text" });
+carSchema.index({
+  title: "text",
+  description: "text",
+  make: "text",
+  model: "text",
+});
 
 /**
  * Geospatial search:
