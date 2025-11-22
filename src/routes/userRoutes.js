@@ -10,6 +10,7 @@ import {
   toggleFavorite,
 } from "../controllers/favoriteController.js";
 import {
+  deactivateUser,
   editProfile,
   resetUserPassword,
 } from "../controllers/userProfileController.js";
@@ -17,10 +18,10 @@ import {
   compareCars,
   getCarDetails,
   searchCars,
+  getAllCarBrands
 } from "../controllers/carController.js";
 import {
-  createSubscriptionSession,
-  handleStripeWebhook,
+  getUserInvoices,
 } from "../controllers/subscriptionController.js";
 import parser from "../storage/imageParser.js";
 import { deleteNotification, getNotification } from "../controllers/notificationController.js";
@@ -70,6 +71,12 @@ userRoutes.get("/cars/compare", compareCars);
 userRoutes.get("/notifications", getNotification);
 userRoutes.delete("/notification/:id", deleteNotification);
 
+userRoutes.put("/deactivate", deactivateUser);
+
+// brand related routes
+userRoutes.get("/get-brands", getAllCarBrands);
+
+userRoutes.get("/invoices", getUserInvoices);
 
 // // Create subscription session
 // userRoutes.post("/subscription/create", createSubscriptionSession);
