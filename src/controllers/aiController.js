@@ -156,7 +156,7 @@ export const importScrapedCars = async (req, res, next) => {
           scraped.price_numeric || scraped.price
             ? Number(scraped.price || scraped.price_numeric)
             : undefined,
-        currency: scraped.currency || "USD",
+        currency: scraped.currency || "EUR",
         mileage:
           scraped.mileage_numeric || scraped.mileage
             ? Number(scraped.mileage || scraped.mileage_numeric)
