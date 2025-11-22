@@ -47,6 +47,6 @@ adminRoutes.delete("/car/:id", deleteCar);
 // Notification delete routes
 adminRoutes.delete("/notification/:id", deleteNotification);
 
-userRoutes.get("/invoices", getAllInvoices);
+adminRoutes.get("/invoices", getAllInvoices);
 
 export default adminRoutes;
