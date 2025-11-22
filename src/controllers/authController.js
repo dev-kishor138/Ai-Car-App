@@ -98,7 +98,6 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
-
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -126,13 +125,11 @@ export const loginUser = async (req, res, next) => {
     // Normalize role
     const role = (user.role || "").toString().toLowerCase();
     const isAdmin = role === "admin" || role.includes("admin");
-
+    const { accessToken, refreshToken } = generateTokens(user);
     // -----------------------------------------
     // ⭐ ADMIN → No status check, no subscription check, nothing.
     // -----------------------------------------
     if (isAdmin) {
-      const { accessToken, refreshToken } = generateTokens(user);
-
       return res.status(200).json({
         message: "Admin login successful",
         accessToken,
@@ -181,13 +178,14 @@ export const loginUser = async (req, res, next) => {
           "Access denied. Your trial expired and no active subscription found.",
         trialExpired: true,
         code: "NO_ACTIVE_SUBSCRIPTION",
+        accessToken,
+        refreshToken,
       });
     }
 
     // -----------------------------------------
     // ⭐ Everything OK → Generate tokens
     // -----------------------------------------
-    const { accessToken, refreshToken } = generateTokens(user);
 
     return res.status(200).json({
       message: "Login successful",
