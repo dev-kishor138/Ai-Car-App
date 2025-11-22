@@ -18,10 +18,10 @@ import {
   compareCars,
   getCarDetails,
   searchCars,
+  getAllCarBrands
 } from "../controllers/carController.js";
 import {
-  createSubscriptionSession,
-  handleStripeWebhook,
+  getUserInvoices,
 } from "../controllers/subscriptionController.js";
 import parser from "../storage/imageParser.js";
 import {
@@ -79,6 +79,11 @@ userRoutes.put("/notifications-all-read", markAllAsRead);
 userRoutes.delete("/notification/:id", deleteNotification);
 
 userRoutes.put("/deactivate", deactivateUser);
+
+// brand related routes
+userRoutes.get("/get-brands", getAllCarBrands);
+
+userRoutes.get("/invoices", getUserInvoices);
 
 // // Create subscription session
 // userRoutes.post("/subscription/create", createSubscriptionSession);

@@ -152,3 +152,24 @@ export const rejectUser = async (req, res, next) => {
     next(error);
   }
 };
+
+// ✅ approved user
+export const statusUpdate = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { status } = req.body;
+
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new DevBuildError("User not found", 404);
+    }
+
+    user.status = status;
+    await user.save();
+
+    res.status(200).json({ message: "status update successfully" });
+  } catch (error) {
+    next(error);
+  }
+};

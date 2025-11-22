@@ -41,6 +41,7 @@ export const registerUser = async (req, res, next) => {
       user.trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days later
       user.isTrialUsed = true;
     }
+    user.status = 'active';
 
     // 👉 Step 3: Save user
     await user.save();

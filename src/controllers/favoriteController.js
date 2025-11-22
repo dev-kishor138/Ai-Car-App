@@ -96,7 +96,7 @@ export const getMyFavorites = async (req, res, next) => {
         .limit(limit)
         .populate({
           path: "carId",
-          select: "_id title brand model price year images status make mileage bodyType fuelType color",
+          select: "_id title brand model price year image status make mileage bodyType fuelType color",
         })
         .lean(),
       Favorite.countDocuments({ userId }),

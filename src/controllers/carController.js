@@ -356,6 +356,7 @@ export const getCarDetails = async (req, res, next) => {
         description: 1,
         // location: 1,
         status: 1,
+        image: 1,
         "media.images": 1,
         "media.cover.url": 1,
         publishedAt: 1,
@@ -413,3 +414,40 @@ export const deleteCar = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const getAllCarBrands = async (req, res, next) => {
+  try {
+    const result = await Car.aggregate([
+      {
+        $match: {
+          brand: { $exists: true, $ne: null, $ne: "" },
+        },
+      },
+      {
+        $group: {
+          _id: "$brand",
+          count: { $sum: 1 }, // কয়টা car আছে per brand
+        },
+      },
+      {
+        // যাদের গাড়ি বেশি, তারা আগে
+        $sort: { count: -1 },
+      },
+    ]);
+
+    const orderedBrands = result
+      .map((b) => String(b._id).trim())
+      .filter(Boolean);
+
+    return res.status(200).json({
+      success: true,
+      message: "Car brands fetched successfully",
+      total: orderedBrands.length,
+      data: orderedBrands, // শুধু brand নাম, count পাঠাচ্ছি না
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

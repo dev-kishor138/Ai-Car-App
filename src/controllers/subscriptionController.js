@@ -150,3 +150,52 @@ export const handleStripeWebhook = async (req, res) => {
 
   res.json({ received: true });
 };
+
+
+export const getAllInvoices = async (req, res, next) => {
+  try {
+
+    const invoices = await Invoice.find()
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      message: "Invoices fetched successfully",
+      total: invoices.length,
+      data: invoices,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const getUserInvoices = async (req, res, next) => {
+  try {
+    // auth middleware theke asha user
+    const userId =
+      req.user?._id ||
+      req.user?.id ||
+      req.userId; // তোমার প্রোজেক্টে যেটা থাকে সেটা use করো
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized: user not found in request" });
+    }
+
+    const invoices = await Invoice.find({ userId })
+      .sort({ createdAt: -1 }) // latest first
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      message: "Invoices fetched successfully",
+      total: invoices.length,
+      data: invoices, // 🔹 শুধু invoice ডাটাই পাঠাচ্ছি
+    });
+  } catch (error) {
+    next(error);
+  }
+};
