@@ -93,9 +93,8 @@ export const importScrapedCars = async (req, res, next) => {
     const notifyRecipientsForNewCar = async (carDoc, mapped) => {
       if (!recipients || recipients.length === 0) return;
 
-      const notifMessage = `🚗 New car listed: ${
-        mapped.make || "Unknown Make"
-      } ${mapped.model || ""} (${mapped.year || "Unknown Year"})`;
+      const notifMessage = `🚗 New car listed: ${mapped.make || "Unknown Make"
+        } ${mapped.model || ""} (${mapped.year || "Unknown Year"})`;
 
       const notifPromises = recipients.map(async (recipient) => {
         try {
@@ -139,11 +138,71 @@ export const importScrapedCars = async (req, res, next) => {
 
     // ===== মূল import loop =====
     for (const scraped of cars) {
-      // basic mapping
+      // ==========================
+      // 1) PRE-VALIDATION
+      // ==========================
+
+      // title / name নিলাম
+      const rawTitle = (
+        scraped.title ||
+        scraped.name || // যদি name field থাকে
+        ""
+      )
+        .toString()
+        .trim();
+
+      // price নিলাম
+      const rawPrice =
+        scraped.price_numeric !== undefined && scraped.price_numeric !== null
+          ? scraped.price_numeric
+          : scraped.price !== undefined && scraped.price !== null
+            ? scraped.price
+            : undefined;
+
+      const numericPrice =
+        rawPrice !== undefined ? Number(rawPrice) : Number.NaN;
+
+      // image নিলাম (আগের মতো priority)
+      const rawImage =
+        (Array.isArray(scraped.images) && scraped.images[0]) ||
+        scraped.image_url ||
+        scraped.imageUrl ||
+        null;
+
+      let imageUrl =
+        typeof rawImage === "string" ? rawImage.toString().trim() : "";
+
+      if (imageUrl && !isValidHttpUrl(imageUrl)) {
+        imageUrl = "";
+      }
+
+      // basic validation: title থাকতে হবে, price থাকতে হবে, image valid থাকতে হবে
+      if (
+        !rawTitle || // empty title
+        !Number.isFinite(numericPrice) || // invalid price
+        !imageUrl // no valid image
+      ) {
+        console.log("Skipping car due to invalid data", {
+          title: rawTitle,
+          rawPrice,
+          imageUrl,
+        });
+        continue; // এই car টাকে একেবারেই save করব না
+      }
+
+      // ==========================
+      // 2) TITLE CLEAN (leading symbols remove)
+      // ==========================
+      // শুরুতে যতগুলো ! @ # $ % ^ * ( ) আছে সব কেটে ফেলছি
+      const cleanedTitle = rawTitle.replace(/^[!@#$%^*()]+/, "").trim();
+
+      // ==========================
+      // 3) BASIC MAPPING (cleaned title + validated price)
+      // ==========================
       const mapped = {
         dealerId: scraped.dealerId || undefined,
         sellerUserId: scraped.sellerUserId || undefined,
-        title: scraped.title || "",
+        title: cleanedTitle, // এখানে clean করা title use করছি
         make: scraped.make || scraped.brand || "",
         model: scraped.model || "",
         brand: scraped.brand || "",
@@ -152,10 +211,7 @@ export const importScrapedCars = async (req, res, next) => {
           scraped.year_numeric || scraped.year
             ? Number(scraped.year || scraped.year_numeric)
             : undefined,
-        price:
-          scraped.price_numeric || scraped.price
-            ? Number(scraped.price || scraped.price_numeric)
-            : undefined,
+        price: numericPrice, // আগের numericPrice use করছি (verified)
         currency: scraped.currency || "EUR",
         mileage:
           scraped.mileage_numeric || scraped.mileage
@@ -170,8 +226,8 @@ export const importScrapedCars = async (req, res, next) => {
         features: Array.isArray(scraped.features)
           ? scraped.features
           : scraped.features
-          ? [scraped.features]
-          : [],
+            ? [scraped.features]
+            : [],
         specs: scraped.specs || {},
         description: scraped.description || scraped.raw_text || "",
         status: scraped.status || "published",
@@ -212,22 +268,9 @@ export const importScrapedCars = async (req, res, next) => {
       }
 
       // ======= SIMPLE IMAGE HANDLE (just one image field) =======
-      // priority: scraped.images[0] -> scraped.image_url -> scraped.imageUrl
-      const rawImage =
-        (Array.isArray(scraped.images) && scraped.images[0]) ||
-        scraped.image_url ||
-        scraped.imageUrl ||
-        null;
-
-      let imageUrl = typeof rawImage === "string" ? rawImage.trim() : "";
-
-      if (imageUrl && !isValidHttpUrl(imageUrl)) {
-        imageUrl = "";
-      }
-
+      // উপরে আমরা imageUrl already validate করেছি
       if (imageUrl) {
-        // এখানে "image" ফিল্ড ধরেছি; যদি তোমার schema তে অন্য নাম হয়
-        // যেমন: imageUrl, thumbnail ইত্যাদি, তাহলে নিচের লাইনটা সেই অনুযায়ী বদলাবে
+        // schema অনুযায়ী ফিল্ড set করলাম
         carDoc.image = imageUrl;
         await carDoc.save();
       }
@@ -236,7 +279,6 @@ export const importScrapedCars = async (req, res, next) => {
       imported.push({
         carId: carDoc._id,
         title: carDoc.title,
-        // শুধু info এর জন্য; আসলে একটাই image আছে
         imagesCount: imageUrl ? 1 : 0,
       });
 
@@ -288,6 +330,236 @@ export const importScrapedCars = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+// export const importScrapedCars = async (req, res, next) => {
+//   // console.time("IMPORT_SCRAPED_CARS");
+//   try {
+//     const cars = req.body.cars;
+
+//     const now = new Date();
+
+//     console.log(
+//       "*****Cars payload length:",
+//       Array.isArray(cars) ? cars.length : 0
+//     );
+//     console.log("*****Cars payload", Array.isArray(cars) ? cars : null);
+
+//     if (!Array.isArray(cars)) {
+//       console.timeEnd("IMPORT_SCRAPED_CARS");
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Invalid format" });
+//     }
+
+//     const imported = [];
+
+//     // Recipients একবারই লোড করব (active admins + users)
+//     const recipients = await User.find({
+//       status: "active",
+//       role: { $in: ["admin", "user"] },
+//     }).select("_id name email");
+
+//     // helper: নতুন car তৈরি হলে notification পাঠানোর জন্য
+//     const notifyRecipientsForNewCar = async (carDoc, mapped) => {
+//       if (!recipients || recipients.length === 0) return;
+
+//       const notifMessage = `🚗 New car listed: ${
+//         mapped.make || "Unknown Make"
+//       } ${mapped.model || ""} (${mapped.year || "Unknown Year"})`;
+
+//       const notifPromises = recipients.map(async (recipient) => {
+//         try {
+//           const notif = await Notification.create({
+//             userId: recipient._id,
+//             type: "alert",
+//             message: notifMessage,
+//             priority: "normal",
+//             status: "unread",
+//           });
+
+//           const channelName = `private-user-${recipient._id.toString()}`;
+//           try {
+//             await pusher.trigger(channelName, "new-notification", {
+//               notificationId: notif._id,
+//               title: "New Car Added",
+//               message: notifMessage,
+//               createdAt: notif.createdAt,
+//               carId: carDoc._id,
+//             });
+//           } catch (pushErr) {
+//             console.error("Pusher trigger failed for", recipient._id, pushErr);
+//           }
+
+//           return notif;
+//         } catch (err) {
+//           console.error(
+//             "Failed to create notification for",
+//             recipient._id,
+//             err
+//           );
+//           return null;
+//         }
+//       });
+
+//       await Promise.allSettled(notifPromises);
+//     };
+
+//     // এখানে আমরা notification গুলো পরে চালানোর জন্য queue তে রাখব
+//     const notificationTasks = [];
+
+//     // ===== মূল import loop =====
+//     for (const scraped of cars) {
+//       // basic mapping
+//       const mapped = {
+//         dealerId: scraped.dealerId || undefined,
+//         sellerUserId: scraped.sellerUserId || undefined,
+//         title: scraped.title || "",
+//         make: scraped.make || scraped.brand || "",
+//         model: scraped.model || "",
+//         brand: scraped.brand || "",
+//         trim: scraped.trim || scraped.vehicleTrim || "",
+//         year:
+//           scraped.year_numeric || scraped.year
+//             ? Number(scraped.year || scraped.year_numeric)
+//             : undefined,
+//         price:
+//           scraped.price_numeric || scraped.price
+//             ? Number(scraped.price || scraped.price_numeric)
+//             : undefined,
+//         currency: scraped.currency || "EUR",
+//         mileage:
+//           scraped.mileage_numeric || scraped.mileage
+//             ? Number(scraped.mileage || scraped.mileage_numeric)
+//             : undefined,
+//         condition: scraped.condition || undefined,
+//         fuelType: scraped.fuelType || undefined,
+//         transmission: scraped.transmission || undefined,
+//         bodyType: scraped.bodyType || undefined,
+//         driveType: scraped.driveType || undefined,
+//         color: scraped.color || undefined,
+//         features: Array.isArray(scraped.features)
+//           ? scraped.features
+//           : scraped.features
+//           ? [scraped.features]
+//           : [],
+//         specs: scraped.specs || {},
+//         description: scraped.description || scraped.raw_text || "",
+//         status: scraped.status || "published",
+//         source: {
+//           type: "scraped",
+//           sourceId: scraped.sourceId || scraped.url || null,
+//           importedAt: new Date(),
+//         },
+//         location: {
+//           city: scraped.city || "",
+//           country: scraped.country || "",
+//         },
+//         vin: scraped.vin || undefined,
+//         ai: scraped.ai || undefined,
+//       };
+
+//       // upsert query: VIN থাকলে VIN দিয়ে, না থাকলে fallback
+//       const query = mapped.vin
+//         ? { vin: mapped.vin }
+//         : { title: mapped.title, make: mapped.make, year: mapped.year };
+
+//       // আগে থেকে ছিল কিনা detect করার জন্য
+//       const existing = await Car.findOne(query).select("_id");
+
+//       // upsert
+//       let carDoc = await Car.findOneAndUpdate(
+//         query,
+//         { $set: mapped },
+//         { new: true, upsert: true }
+//       );
+
+//       // safety
+//       if (!carDoc || !carDoc._id) {
+//         carDoc = await Car.findOne(query);
+//         if (!carDoc) {
+//           carDoc = await Car.create(mapped);
+//         }
+//       }
+
+//       // ======= SIMPLE IMAGE HANDLE (just one image field) =======
+//       // priority: scraped.images[0] -> scraped.image_url -> scraped.imageUrl
+//       const rawImage =
+//         (Array.isArray(scraped.images) && scraped.images[0]) ||
+//         scraped.image_url ||
+//         scraped.imageUrl ||
+//         null;
+
+//       let imageUrl = typeof rawImage === "string" ? rawImage.trim() : "";
+
+//       if (imageUrl && !isValidHttpUrl(imageUrl)) {
+//         imageUrl = "";
+//       }
+
+//       if (imageUrl) {
+//         // এখানে "image" ফিল্ড ধরেছি; যদি তোমার schema তে অন্য নাম হয়
+//         // যেমন: imageUrl, thumbnail ইত্যাদি, তাহলে নিচের লাইনটা সেই অনুযায়ী বদলাবে
+//         carDoc.image = imageUrl;
+//         await carDoc.save();
+//       }
+
+//       // imported summary
+//       imported.push({
+//         carId: carDoc._id,
+//         title: carDoc.title,
+//         // শুধু info এর জন্য; আসলে একটাই image আছে
+//         imagesCount: imageUrl ? 1 : 0,
+//       });
+
+//       // নতুন car (existing ছিল না) হলে notification task queue তে রেখে দিচ্ছি
+//       if (!existing) {
+//         notificationTasks.push(
+//           notifyRecipientsForNewCar(carDoc, mapped).catch((notifyErr) => {
+//             console.error(
+//               "Notification sending failed for car",
+//               carDoc._id,
+//               notifyErr
+//             );
+//           })
+//         );
+//       }
+//     }
+
+//     // এখানে আমরা দ্রুত response পাঠিয়ে দিচ্ছি
+//     console.timeEnd("IMPORT_SCRAPED_CARS");
+//     res.status(200).json({
+//       success: true,
+//       count: imported.length,
+//       imported,
+//     });
+
+//     // ==========================
+//     // Background এ notifications
+//     // ==========================
+//     if (notificationTasks.length > 0) {
+//       Promise.allSettled(notificationTasks)
+//         .then((results) => {
+//           const fulfilled = results.filter(
+//             (r) => r.status === "fulfilled"
+//           ).length;
+//           const rejected = results.length - fulfilled;
+//           console.log(
+//             `[IMPORT_SCRAPED_CARS] Notifications processed. success=${fulfilled}, failed=${rejected}`
+//           );
+//         })
+//         .catch((err) => {
+//           console.error(
+//             "[IMPORT_SCRAPED_CARS] Error while processing notifications:",
+//             err
+//           );
+//         });
+//     }
+//   } catch (error) {
+//     console.timeEnd("IMPORT_SCRAPED_CARS");
+//     next(error);
+//   }
+// };
 
 // export const importScrapedCars = async (req, res, next) => {
 //   try {
