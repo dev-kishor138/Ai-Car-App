@@ -1,7 +1,6 @@
 import express from "express";
 import {
   loginUser,
-  loginWithFirebase,
   refreshToken,
   registerUser,
   resetPassword,
@@ -9,11 +8,7 @@ import {
   verifyOTP,
 } from "../controllers/authController.js";
 import { googleLogin } from "../controllers/googleLogin.js";
-import {
-  compareCars,
-  getCarDetails,
-  searchCars,
-} from "../controllers/carController.js";
+import { getUserFavorites } from "../controllers/globalController.js";
 
 const globalRoutes = express.Router();
 
@@ -21,6 +16,8 @@ const globalRoutes = express.Router();
 globalRoutes.post("/register", registerUser);
 globalRoutes.post("/login", loginUser);
 globalRoutes.post("/refresh-token", refreshToken);
+
+// globalRoutes.get("/check-token", checkToken);
 
 // globalRoutes.post("/firebase-login", verifyFirebaseIdToken, loginWithFirebase);
 
@@ -39,8 +36,6 @@ globalRoutes.post("/google-login", googleLogin);
 // all car list
 // globalRoutes.get('/cars', getAllCar);
 
-// globalRoutes.get('/car-list-scrap', carList);
-// globalRoutes.get("/_debug/page", debugPage);
-// globalRoutes.get("/_debug/probe-rapid", probeRapid);
+globalRoutes.get("/user-favorites/:id", getUserFavorites);
 
 export default globalRoutes;

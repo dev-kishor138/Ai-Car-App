@@ -223,6 +223,33 @@ export const refreshToken = async (req, res, next) => {
   }
 };
 
+
+// // ✅ Access Token Check
+// export const checkToken = async (req, res, next) => {
+//   try {
+//     const { refreshToken } = req.body;
+//     // if (!refreshToken) return res.status(401).json({ message: "Refresh token required" });
+//     if (!refreshToken) throw new DevBuildError("Refresh token required", 401);
+
+//     jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (err, decoded) => {
+//       // if (err) return res.status(403).json({ message: "Invalid refresh token" });
+//       if (err) throw new DevBuildError("Invalid refresh token", 403);
+
+//       const accessToken = jwt.sign(
+//         { id: decoded.id },
+//         process.env.JWT_SECRET_TOKEN,
+//         { expiresIn: process.env.JWT_EXPIRES_IN }
+//       );
+
+//       res.status(200).json({ accessToken });
+//     });
+//   } catch (error) {
+//     // res.status(500).json({ error: error.message });
+//     next(error);
+//   }
+// };
+
+
 // ✅ Send OTP to User's Email
 export const sendOTP = async (req, res, next) => {
   try {
